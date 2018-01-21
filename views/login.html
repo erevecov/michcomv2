@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Testing</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        
+        body {
+            background-image: url("/public/img/wallpaper.jpg");
+            background-color: #cccccc;
+            background-repeat: no-repeat;
+            background-size: auto;
+         }
+
+         #loginContainer {
+            background: rgba(0,0,0,0.7);
+            color:rgba(255,255,255,0.8);
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            top:0;
+            left:0;
+         }
+
+         #logo{
+          margin-top:10%;
+         }
+
+         #logo img {
+            max-height: 150px;
+            width:50%;
+         }
+
+         #forms {
+            margin-left: 20px;
+            margin-right: 20px;
+         }
+
+         .input-group input {
+             color:white !important;
+             font-size: 25px !important;
+             text-align: center;
+         }
+    </style>
+</head>
+<body>
+ 
+<div class="container-fluid">
+    <div id="loginContainer">
+        <center>  
+        <div id="logo">
+            <img src="/public/img/logo2.png" alt="">
+        </div>
+        <br>
+        <h1>LOGIN</h1>
+        </center>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <form method="post" action="/login">
+                    <div id="forms">
+                        <div class="input-group margin-bottom-sm">
+                            <span class="input-group-addon"><br><i class="fa fa-2x fa-envelope-o fa-fw"></i></span>
+                            <input id="email" name="username" class="form-control" type="text" placeholder="Email address">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon"><br><i class="fa fa-2x fa-key fa-fw"></i></span>
+                            <input id="password" name="password" class="form-control" type="password" placeholder="Password">
+                        </div>
+                        <br>
+                        {{#if message}}
+                        <div class="alert alert-dismissible alert-warning">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{message}}
+                        </div>
+                        <br>
+                        {{/if}}
+                        <input type="submit" class="btn btn-primary btn-block" value="Login">
+                        <br>
+                        <br>
+                        <br>
+                        <center>  ©2018 Michcom Ltda. Reservados todos los derechos. </center>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+<!--<script src="/public/js/default.js"></script>-->
+<script>
+
+$(document).ready(function() {
+    $('#email').focus();
+});
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+</script>
+</body>
+</html>

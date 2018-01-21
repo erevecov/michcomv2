@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"> 
+</head>
+<body>
+    <div class="container">
+        <div id="body404" class="text-center">
+            <h1 class="display-3">Ooops!</h1>
+            <h1 class="display-1">404 Not Found</h1>
+        </div>
+    </div>
+    
+        
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+    <script>
+        setTimeout(() => {
+            $('#body404').addClass('animated bounceOutLeft');
+
+            setTimeout(() => {
+                window.location.replace(window.location.protocol + "//" + window.location.host);
+            }, 500);
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+{{!< layout/default}}
+
+
+{{#extend "css"}}
+<style>
+    .nav .nav-item:hover {
+        border: 1px solid #3498db;
+        border-radius: 5px;
+    }
+</style> 
+
+{{/extend}}
+<!--
+<ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Michcom</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Tronit</a>
+    </li>
+</ul>
+
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">...</div>
+    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">...</div>
+</div>
+-->
+<div class="row">
+    <div class="card bg-light mb-3 col-md-12">
+        <div class="card-body">
+            <div>
+                <table id="clientsTable" class="display nowrap table" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>EMPRESA</th>
+                            <th>RUT</th>
+                            <th>FACTURAS PENDIENTES</th>
+                            <th>ESTADO</th>
+                            <th>MONTO</th>
+                        </tr>
+                    </thead>
+                </table>
+
+                <div id="loadingClientsTable"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card bg-light col-md-4">
+        <h3 class="card-header text-center">MONTOS ADEUDADOS</h3>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 col-xs-6">
+                    <h3>MICHCOM: </h3>
+                </div>
+                <div class="col-md-6 col-xs-6 text-right">
+                    <div id="michcomTotalOwed"></div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 col-xs-6">
+                    <h3>TRONIT: </h3>
+                </div>
+                <div class="col-md-6 col-xs-6 text-right">
+                    <div id="tronitTotalOwed"></div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 col-xs-6">
+                    <h2>TOTAL: </h2>
+                </div>
+                <div class="col-md-6 col-xs-6 text-right">
+                    <div id="totalOwed"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-light col-md-4">
+        <h3 class="card-header text-center">CLIENTES</h3>
+        <div id="totalChart" class="card-body text-center">
+            <br><br><br><br>
+            <i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div id="clientInfo" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="modal_title">Datos del cliente</h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
+            </div>
+            <div class="modal-body" id="modal_body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills mb-3 nav-justified" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#info" aria-controls="info" role="pill" data-toggle="pill">Información del cliente</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="newInvoiceTabButton" class="nav-link" href="#new" aria-controls="new" role="pill" data-toggle="pill">Nueva factura</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="generateReportTabButton" class="nav-link" href="#generate_report" aria-controls="generate_report" role="pill" data-toggle="pill">Generar informe</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="info">
+                        
+                        <div id="invoiceStep"></div>
+
+                        <div id="infoContent">  					
+                            <div id="invoices" class="table-responsive"></div>	
+                            <div id="clientData"></div>
+                        </div>
+
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="new"></div>
+
+                    <div role="tabpanel" class="tab-pane row" id="generate_report">
+                        <button class="btn btn-danger" id="initpdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exportar a pdf</button>
+                        <div class="box-shadows col-md-12" id="reportDiv">
+                            <h3 style="float:right">CURICO, <span id="report_date"></span></h3>
+                            <br><br>
+                            <h4 id="report_business_name"></h4>
+                            <h4 id="report_business_rut"></h4>
+                            <h4 id="report_business_address"></h4>
+                            <br><br>
+                            <p>Estimado cliente:</p>
+                            <p>
+                            Según lo observado en nuestra gestión de cobros, se encuentra pendiente de pagos las facturas según detalle.
+                            Las que agradecemos cancelar e indicar comprobantes de pago en caso de haber sido canceladas a la fecha.
+                            </p>
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">N° Factura</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Razón social</th>
+                                        <th scope="col">Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report_table_invoices">
+                                </tbody>
+                            </table> 
+                            
+                            <p>
+                            Recordamos que pueden hacer su pago a través de depósito y/o transferencia bancaria a la siguiente cuenta corriente como corresponda.	
+                            </p>
+                            <br>
+                            <p>Nombre: <b>Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L.</b>	</p>
+                            <p>Banco: <b>Itaú</b></p>
+                            <p>Rut: <b>76.623.477-1</b></p>
+                            <p>N° Cuenta: <b>02 07 13 28 23</b></p>
+                            <br>
+                            <p>Nombre: <b>Comercial Servicios y Asesorias M y G Limitada.</b>	</p>
+                            <p>Banco: <b>Itaú</b></p>
+                            <p>Rut: <b>76.235.643-0</b></p>
+                            <p>N° Cuenta: <b>02 06 71 15 32</b></p>
+                            <br><br>
+
+                            <div id="reportTable">
+                                
+                            </div>
+                            <br><br>
+
+                            <p>Atentamente.</p>
+                            <p>Departamento de Gestión y Cobros.-</p>
+                            <br><br>
+                            <center>	<h3>MICHCOM LTDA</h3> </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <!--<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>-->
+            <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+        </div>
+
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+ 
+
+{{#extend "js"}}
+<script src="/public/home/js/main.js"></script>
+{{/extend}}
