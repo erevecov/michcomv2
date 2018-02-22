@@ -26,7 +26,9 @@ const findUser = async (email, password) => {
         } else {
           resolve(null)
         }
-      } 
+      } else {
+        resolve(null)
+      }
 
     })
   })
