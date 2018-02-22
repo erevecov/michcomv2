@@ -4,7 +4,7 @@ let selectedClientRow; // ROW Actual seleccionada de clientsTable
 let collapseReportStatus = 0;
 let configColors = {
   owed: '#9E9E9E',
-  paid: '#64B5F6'
+  paid: '#90CAF9'
 };
 let invoicesReport = {
   rows: [],
