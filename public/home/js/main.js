@@ -4,7 +4,7 @@ let selectedClientRow; // ROW Actual seleccionada de clientsTable
 let collapseReportStatus = 0;
 let configColors = {
   owed: '#9E9E9E',
-  paid: '#40C4FF'
+  paid: '#64B5F6'
 };
 let invoicesReport = {
   rows: [],
@@ -1180,20 +1180,26 @@ $("a[href='#generate_report']").on('show.bs.tab', function(e) {
     invoicesReport.rows = [];
     invoicesReport.tronit = 0;
     invoicesReport.michcom = 0;
-    res.forEach(el => {
-      if (el.business == 'Tronit Ltda') invoicesReport.tronit += el.amount;
-      if (el.business == 'Michcom Ltda') invoicesReport.michcom += el.amount;
 
-      invoicesReport.rows.push([el.invoice, el.description, el.business, '$' + number_format(el.amount)]);
-      $('#report_table_invoices').append(`
-          <tr>
-              <td>${el.invoice}</td>
-              <td>${el.description}</td>
-              <td>${el.business}</td>
-              <td>$ ${number_format(el.amount)}</td>
-          </tr>
-      `);
-    });
+    if(res.error) {
+      toastr.warning('El cliente no tiene facturas pendientes!');
+      $('.nav-pills a[href="#info"]').tab('show'); // ir a pestaña de información del cliente
+    } else {
+      res.forEach(el => {
+        if (el.business == 'Tronit Ltda') invoicesReport.tronit += el.amount;
+        if (el.business == 'Michcom Ltda') invoicesReport.michcom += el.amount;
+  
+        invoicesReport.rows.push([el.invoice, el.description, el.business, '$' + number_format(el.amount)]);
+        $('#report_table_invoices').append(`
+            <tr>
+                <td>${el.invoice}</td>
+                <td>${el.description}</td>
+                <td>${el.business}</td>
+                <td>$ ${number_format(el.amount)}</td>
+            </tr>
+        `);
+      });
+    }
 
     $('#michcomReportTotalOwed').text('$'+ number_format(invoicesReport.michcom));
     $('#tronitReportTotalOwed').text('$' + number_format(invoicesReport.tronit));
