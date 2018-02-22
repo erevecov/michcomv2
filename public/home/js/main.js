@@ -717,7 +717,7 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
     
             createLog({
               form: 'Facturas',
-              desc: 'Se modificó la factura ' + modInvoiceNumber + ' al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
+              desc: 'Se modificó la factura ' + modInvoiceNumber + '(original: '+statusDataRow.invoice+') al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
               extra: modInvoiceNumber
             });
     
