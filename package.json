@@ -4,7 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "babel-watch app.js"
+    "test": "babel-watch app.js",
+    "start": "pm2 start app.js --interpreter babel-node --name michcomv2",
+    "stop": "pm2 stop michcomv2",
+    "restart": "npm stop && npm start"
   },
   "keywords": [],
   "author": "",
