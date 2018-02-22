@@ -2,7 +2,7 @@ import Joi from 'joi'
 import cloudant from '../../config/db.js'
 import moment from 'moment-timezone'
 
-let db = cloudant.db.use('michcom_developing')
+let db = cloudant.db.use('michcom')
 
 const invoices = [{ // Crear una factura
   method: 'POST',

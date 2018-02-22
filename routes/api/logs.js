@@ -2,7 +2,7 @@ import Joi from 'joi'
 import cloudant from '../../config/db.js'
 import moment from 'moment-timezone'
 
-let db = cloudant.db.use('michcom_developing_logs')
+let db = cloudant.db.use('michcom_logs')
 
 const Logs = [{ // ver todos
   method: 'GET',

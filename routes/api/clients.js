@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import cloudant from '../../config/db.js'
 
-let db = cloudant.db.use('michcom_developing')
+let db = cloudant.db.use('michcom')
 
 const clients = [{ // todos los clientes habilitados
   method: 'GET',

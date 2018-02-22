@@ -3,7 +3,7 @@ import cloudant from '../../config/db.js';
 import moment from 'moment-timezone';
 import md5 from 'md5';
 
-let db = cloudant.db.use('michcom_developing');
+let db = cloudant.db.use('michcom');
 
 const Users = [{ // ver todos
     method: 'GET',
