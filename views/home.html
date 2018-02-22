@@ -127,7 +127,19 @@
                     <div role="tabpanel" class="tab-pane" id="new"></div>
 
                     <div role="tabpanel" class="tab-pane row" id="generate_report">
+                        
+                        
                         <button class="btn btn-danger" id="initpdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exportar a pdf</button>
+                        <button class="btn btn-primary" type="button" id="reportCollapseButton">
+                            <i class="fa fa-envelope-o" aria-hidden="true"></i> Enviar por correo
+                        </button>
+                        <!--<button class="btn btn-primary" id="sendReport"><i class="fa fa-envelope-o" aria-hidden="true"></i> Enviar por correo</button>-->                     
+                        
+                        <!--<div class="collapse" id="collapseEmail"></div>-->
+                        <div class="col-md-4">
+                            <ul class="collapse list-group" id="collapseEmail"></ul>
+                        </div>
+
                         <div class="box-shadows col-md-12" id="reportDiv">
                             <h3 style="float:right">CURICO, <span id="report_date"></span></h3>
                             <br><br>
@@ -137,11 +149,11 @@
                             <br><br>
                             <p>Estimado cliente:</p>
                             <p>
-                            Según lo observado en nuestra gestión de cobros, se encuentra pendiente de pagos las facturas según detalle.
-                            Las que agradecemos cancelar e indicar comprobantes de pago en caso de haber sido canceladas a la fecha.
+                            Según lo observado en nuestra gestión de cobros, se encuentran pendientes de pago las facturas según detalle.
+                            <span style="background:yellow;">Las que agradecemos cancelar o indicar comprobantes de pago al correo <b>contabilidad@michcom.cl</b> en caso de haber sido canceladas a la fecha.</span>
                             </p>
 
-                            <table class="table table-hover">
+                            <table class="table table-hover table-striped" border="1" style="border-collapse: collapse">
                                 <thead>
                                     <tr>
                                         <th scope="col">N° Factura</th>
@@ -154,16 +166,28 @@
                                 </tbody>
                             </table> 
                             
+                            
+                            <div style"left:30px;">
+                                <h1>Michcom Ltda: <span id="michcomReportTotalOwed"></span></h1>
+                            </div>
+                            <br>
+                            <div style="left:30px;">
+                                <h1>Tronit Ltda: <span id="tronitReportTotalOwed"></span></h1>
+                            </div>
+                            
+
+                            <br>
+
                             <p>
                             Recordamos que pueden hacer su pago a través de depósito y/o transferencia bancaria a la siguiente cuenta corriente como corresponda.	
                             </p>
                             <br>
-                            <p>Nombre: <b>Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L.</b>	</p>
+                            <p>Nombre: <b>Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L. (Tronit Ltda)</b>	</p>
                             <p>Banco: <b>Itaú</b></p>
                             <p>Rut: <b>76.623.477-1</b></p>
                             <p>N° Cuenta: <b>02 07 13 28 23</b></p>
                             <br>
-                            <p>Nombre: <b>Comercial Servicios y Asesorias M y G Limitada.</b>	</p>
+                            <p>Nombre: <b>Comercial Servicios y Asesorias M y G Limitada. (Michcom Ltda)</b>	</p>
                             <p>Banco: <b>Itaú</b></p>
                             <p>Rut: <b>76.235.643-0</b></p>
                             <p>N° Cuenta: <b>02 06 71 15 32</b></p>

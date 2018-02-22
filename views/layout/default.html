@@ -5,16 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Testing</title>
-    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <title>Michcom Intranet</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css"> <!--seleccionado-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/litera/bootstrap.min.css">--><!--bueno-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/cosmo/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/lumen/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/pulse/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/spacelab/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">-->
     <link rel="stylesheet" href="/public/jqueryUI/jquery-ui.min.css">
     <link rel="stylesheet" href="/public/css/dataTables.searchHighlight.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/b-html5-1.5.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/sc-1.4.3/sl-1.2.4/datatables.min.css"/>
-    <link rel="stylesheet" href="public/css/daterangepicker.css">
-    <link rel="stylesheet" href="public/css/sweetalert2.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="/public/css/animate.min.css">
+    <link rel="stylesheet" href="/public/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/public/css/datatables.min.css"/>
+    <link rel="stylesheet" href="/public/css/daterangepicker.css">
+    <link rel="stylesheet" href="/public/css/sweetalert2.css">
+    <link rel="stylesheet" href="/public/css/toastr.min.css">
+    <link rel="stylesheet" href="/public/css/select2.min.css">
+    <!-- Nprogress -->
+    <link rel="stylesheet" href="public/css/nprogress.css">
+    <script src="/public/js/nprogress.js"></script>
+
+    <!-- Nprogress -->
     <style>
         @media (min-width: 768px) {
             .modal-xl {
@@ -38,7 +51,7 @@
         }
 
         .navbar-nav .nav-item .nav-link {
-            font-size: 20px !important; 
+            font-size: 20px !important;
         }
 
         .navbar-nav .nav-item .nav-link:hover {
@@ -65,9 +78,10 @@
     </style>
     {{#block "css"}}
     {{/block}}
+
 </head>
+
 <body>
- 
 <div class="container-fluid">
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">
@@ -76,41 +90,21 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#"><i class="fa fa-home" aria-hidden="true"></i> Home <span class="sr-only">(current)</span></a>
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa fa-building" aria-hidden="true"></i> Clientes</a>
+                    <a class="nav-link" href="/clients"><i class="fa fa-building" aria-hidden="true"></i> Clientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa fa-users" aria-hidden="true"></i> Usuarios</a>
+                    <a class="nav-link" href="/users"><i class="fa fa-users" aria-hidden="true"></i> Usuarios</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa fa-book" aria-hidden="true"></i> Logs</a>
+                    <a class="nav-link" href="/logs"><i class="fa fa-book" aria-hidden="true"></i> Logs</a>
                 </li>
-                <!--
-                <h1><span style="color:#f1c40f">S</span>
-                    <span style="color:#9b59b6">I</span>
-                    <span style="color:#2ecc71">S</span>
-                    <span style="color:#3498db">T</span>
-                    <span style="color:#e74c3c">E</span>
-                    <span style="color:#e67e22">M</span>
-                    <span style="color:#1abc9c">A</span>
-                    <span style="color:#f1c40f"> </span>
-                    <span style="color:#9b59b6">A</span>
-                    <span style="color:#2ecc71">R</span>
-                    <span style="color:#3498db">C</span>
-                    <span style="color:#e74c3c">O</span>
-                    <span style="color:#e67e22">I</span>
-                    <span style="color:#1abc9c">R</span>
-                    <span style="color:#f1c40f">I</span>
-                    <span style="color:#9b59b6">S</span>
-
-                </h1>
-                -->
             </ul>
             <div class="my-2 my-lg-0 user dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -123,14 +117,18 @@
                     <a data-toggle="tooltip" data-placement="bottom" title="Finalizar sesión" class="dropdown-item logout" href="/logout"><i class="fa fa-times" aria-hidden="true"></i> Cerrar sesión</a>
                 </div>
             </div>
-            
+
         </div>
     </nav>
-    <div class="container-fluid" id="container">
-        {{{ content }}}        
+    <div id="container">
+        {{{ content }}}
     </div>
 </div>
 
+<script>
+    NProgress.configure({ parent: 'body' });
+    NProgress.start();
+</script>
 <script src="/public/js/jquery.min.js"></script>
 <script src="/public/js/jQuery.rut.js"></script>
 <script src="/public/js/popper.min.js"></script>
@@ -141,110 +139,78 @@
 <script src="/public/js/exporting.js"></script>
 <script src="/public/js/moment.js"></script>
 <script src="/public/js/daterangepicker.js"></script>
+<script src="/public/js/select2.min.js"></script>
+
 <!--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
 -->
 <script src="/public/js/datatables.min.js"></script>
-<script src="public/js/sweetalert2.js"></script>
+<script src="/public/js/sweetalert2.js"></script>
 <script src="/public/js/toastr.min.js"></script>
 <script src="/public/js/jspdf.min.js"></script>
 <script src="/public/js/jspdf.plugin.autotable.js"></script>
 
-<!--<script src="http://localhost:4100/socket.io/socket.io.js"></script>-->
 <script>
 
     $(document).ready(function() {
-        $('[data-toggle="tooltip"]').tooltip()
+      $('[data-toggle="tooltip"]').tooltip()
     });
-
-    /*
-    var socket = io.connect('http://localhost:4100');
-    var socketSession = { id: '{{ credentials.email }}', token: '{{ credentials.socket }}'}
-    
-    socket.on('authorized', function(data){
-        timer(data.ttl)
-    });
-
-    socket.on('unauthorized', function(data){
-        //document.getElementById('auth').innerHTML = data.error
-    });
-    
-    socket.on('disconnect', function(){
-        //document.getElementById('status').innerHTML = 'disconnected'
-	});
-	socket.on('connect', function(){
-        login();
-		//document.getElementById('status').innerHTML = 'connected'
-    });
-
-    const emitter = (obj) => {
-        obj.session = socketSession
-        return obj
-    }
-     const login = () => {
-        var auth = {}
-        auth.session = socketSession 
-        socket.emit('login', auth);
-    }
-    */
 
     const getTime = () => {
-        return new Promise(resolve=>{
-            ajax({url: 'api/tools/getServerTime'}).then(data=>{
-                resolve(data);
-            })
+      return new Promise(resolve=>{
+        ajax({url: 'api/tools/getServerTime'}).then(data=>{
+          resolve(data);
         })
+      })
     };
-
-   
 
     String.prototype.capitalize = () => this.charAt(0).toUpperCase() + this.slice(1);
 
     const number_format = (amount, decimals) => {
+      amount += ''; // por si pasan un numero en vez de un string
+      amount = parseFloat(amount.replace(/[^0-9\.]/g, '')); // elimino cualquier cosa que no sea numero o punto
 
-        amount += ''; // por si pasan un numero en vez de un string
-        amount = parseFloat(amount.replace(/[^0-9\.]/g, '')); // elimino cualquier cosa que no sea numero o punto
+      decimals = decimals || 0; // por si la variable no fue fue pasada
 
-        decimals = decimals || 0; // por si la variable no fue fue pasada
+      // si no es un numero o es igual a cero retorno el mismo cero
+      if (isNaN(amount) || amount === 0)
+          return parseFloat(0).toFixed(decimals);
 
-        // si no es un numero o es igual a cero retorno el mismo cero
-        if (isNaN(amount) || amount === 0) 
-            return parseFloat(0).toFixed(decimals);
+      // si es mayor o menor que cero retorno el valor formateado como numero
+      amount = '' + amount.toFixed(decimals);
 
-        // si es mayor o menor que cero retorno el valor formateado como numero
-        amount = '' + amount.toFixed(decimals);
+      var amount_parts = amount.split('.'),
+          regexp = /(\d+)(\d{3})/;
 
-        var amount_parts = amount.split('.'),
-            regexp = /(\d+)(\d{3})/;
+      while (regexp.test(amount_parts[0]))
+          amount_parts[0] = amount_parts[0].replace(regexp, '$1' + '.' + '$2');
 
-        while (regexp.test(amount_parts[0]))
-            amount_parts[0] = amount_parts[0].replace(regexp, '$1' + '.' + '$2');
-
-        return amount_parts.join('.');
+      return amount_parts.join('.');
     }
+    /*
     const hhmmss = (secs) => {
-        var minutes = Math.floor(secs / 60);
-        secs = secs%60;
-        var hours = Math.floor(minutes/60)
-        minutes = minutes%60;
-        return pad(hours)+":"+pad(minutes)+":"+pad(secs);
+      var minutes = Math.floor(secs / 60);
+      secs = secs%60;
+      var hours = Math.floor(minutes/60)
+      minutes = minutes%60;
+      return pad(hours)+":"+pad(minutes)+":"+pad(secs);
     }
 
     const pad = (num) => {
-        return ("0"+num).slice(-2);
+      return ("0"+num).slice(-2);
     }
 
     const timer = (sessionSeconds) => {
-        this.timerInterval = setInterval(() => {
-            $('#sessionTime').text(hhmmss(sessionSeconds))
-            sessionSeconds -= 1 
-        }, 1000);
+      this.timerInterval = setInterval(() => {
+        $('#sessionTime').text(hhmmss(sessionSeconds))
+        sessionSeconds -= 1
+      }, 1000);
     }
-
-    const createLog = ({form, desc}) => ajax({url:'api/log', type: 'POST', data: {description: desc, form: form}})
+  */
 
     const ajax = ({type, url, data}) => {
+        
         return new Promise((resolve, reject)=>{
             let options = {
                 url
@@ -254,7 +220,7 @@
             } else {
                 options.type = type;
             }
-        
+
             if(data) options.data = data;
 
             $.ajax(options)
@@ -266,6 +232,11 @@
             });
         });
     };
+
+    const createLog = ({form, desc, extra}) => {
+        //console.log(desc,form,String(extra))
+        ajax({ url:'/api/log', type: 'POST', data: {description: desc, form: form, extra: String(extra)} })
+    }
 
     moment.locale('es');
 </script>

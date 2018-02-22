@@ -1,0 +1,767 @@
+{{!< layout/default}}
+
+{{#extend "css"}}
+<style>
+	#newClientName {	
+    	text-transform: uppercase;
+	}
+</style>
+{{/extend}}
+<!--
+    Importante!
+
+    Al deshabilitar un cliente, sus facturas siguen existiendo en el sistema, esten pendientes o pagadas
+
+-->
+<nav>
+<div class="nav nav-pills mb-3 nav-justified" role="tablist"> 
+    <a class="nav-item nav-link active" id="enables-tab" data-toggle="tab" role="tab" aria-controls="enabled_tab" aria-selected="true" href="#enabled_clients">Clientes habilitados</a>
+    <a class="nav-item nav-link" id="disables-tab" data-toggle="tab" role="tab" aria-controls="disabled_tab" aria-selected="false" href="#disabled_clients">Clientes deshabilitados</a> 
+</div>
+</nav>
+
+    
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="enabled_clients" role="tabpanel" aria-labelledby="enables-tab">
+        <div class="row">
+            <div class="col-md-2 col-xs-12 box-shadows">
+                <br>
+                <button class="btn btn-primary btn-block" id="createButton">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Crear
+                </button>
+                <br>
+                <button class="btn btn-warning btn-block" id="modButton" disabled>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Modificar
+                </button>
+                <br>	
+                <button class="btn btn-danger btn-block" id="desButton" disabled>
+                    <i class="fa fa-times" aria-hidden="true"></i> Deshabilitar
+                </button>
+                <br>		
+            </div>
+
+            <div class="col-md-10 col-xs-12 box-shadows table-responsive">
+                <table id="table" class="display nowrap table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                        <th>Empresa:</th>
+                        <th>Rut:</th>
+                        </tr>
+                    </thead>		 
+                </table>
+                <div id="loadingClients">
+                    <center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="disabled_clients" role="tabpanel" aria-labelledby="disables-tab">
+        <div class="row">
+            <div class="col-md-2 col-xs-12 box-shadows">
+                <br>	
+                <button class="btn btn-success btn-block" id="habButton" disabled>
+                    <i class="fa fa-times" aria-hidden="true"></i> Habilitar
+                </button>
+                <br>		
+            </div>
+
+            <div class="col-md-10 col-xs-12 box-shadows table-responsive">
+                <table id="table2" class="display nowrap table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                        <th>Empresa:</th>
+                        <th>Rut:</th>
+                        </tr>
+                    </thead>		 
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal -->
+
+<div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="modal_title">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal_title"></h4>
+      </div>
+      <div class="modal-body" id="modal_body"></div>
+      <div class="modal-footer" id="modal_footer"></div>
+    </div>
+  </div>
+</div>
+
+{{#extend "js"}}
+<script>
+    
+	var datatable;
+	var datatable2;
+	var selectedClientRut = '';
+	var selectedClientData;  // los datos del cliente de la row seleccionada
+	var selectedClientRow; // la row seleccionada del cliente
+
+	var dSelectedClientRut = '';
+	var dSelectedClientData;  // los datos del cliente de la row seleccionada (deshabilitados)
+	var dSelectedClientRow; // la row seleccionada del cliente (deshabilitados)
+
+	var clientsData = []; // todos los clientes (Campos formateados)
+	var disabledClientsData = []; // todos los clientes deshabilitados (Campos formateados)
+
+	jQuery(document).ready(function($) {	
+		chargeTable()
+		chargeTable2()
+
+		function chargeTable() {
+			datatable = $('#table')
+			.DataTable( {
+				"iDisplayLength": 100,
+				"oLanguage": {
+					"sSearch": ""
+				},
+				"responsive": true,
+				"columns" : [ 
+					{"data" : "name"}, 
+					{"data" : "rut"}
+				],
+				initComplete: function(settings, json) {
+	 				$.ajax({
+						url: 'api/clients'
+					})
+					.done(function(data) {
+                        if (!data.err) {
+                            $.each(data, function(index, val) {
+                                clientsData.push({
+                                    name: val.name,
+                                    rut: $.formatRut(val._id)
+                                })
+                            });
+
+                            datatable.rows.add(clientsData).draw();
+                        } else {
+                            toastr.warning('No existen clientes habilitados')
+                        }
+						$('#loadingClients').empty();
+					})
+					.fail(function() {
+                        console.log("error al cargar clientes");
+                        $('#loadingClients').empty();
+					});
+  				}
+			});
+
+
+			$('#table tbody').on( 'click', 'tr', function () {
+        		if ( $(this).hasClass('selected') ) {
+	            	$(this).removeClass('selected');
+	            	$('#modButton').prop('disabled', true);
+		            $('#desButton').prop('disabled', true);
+		        } else {
+		            datatable.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		            selectedClientRow = datatable.row( $(this) );
+		            selectedClientData = datatable.row( $(this) ).data();
+		            var replace1 = selectedClientData.rut.split('.').join('');
+  					var replace2 = replace1.replace('-', '');
+  					selectedClientRut = replace2;
+
+		            $('#modButton').prop('disabled', false);
+		            $('#desButton').prop('disabled', false);
+	        	}
+    		});
+		}
+
+		function chargeTable2() {
+			datatable2 = $('#table2')
+			.DataTable( {
+				"iDisplayLength": 100,
+				"oLanguage": {
+					"sSearch": ""
+				},
+				"columns" : [ 
+					{"data" : "name"}, 
+					{"data" : "rut"}
+				],
+				"responsive": true,
+				initComplete: function(settings, json) {
+	 				$.ajax({
+						url: 'api/disabledClients'
+					})
+					.done(function(data) {
+                        if(!data.err) {
+                            $.each(data, function(index, val) {
+                                disabledClientsData.push({
+                                    name: val.name,
+                                    rut: $.formatRut(val._id)
+                                })
+                            });
+
+                            datatable2.rows.add(disabledClientsData).draw();
+                        }
+					})
+					.fail(function() {
+						console.log("error al cargar clientes deshabilitados");
+					});
+  				}
+			});
+
+			$('#table2 tbody').on( 'click', 'tr', function () {
+        		if ( $(this).hasClass('selected') ) {
+	            	$(this).removeClass('selected');
+	            	$('#habButton').prop('disabled', true);
+		        } else {
+		            datatable2.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		            dSelectedClientRow = datatable2.row( $(this) );
+		            dSelectedClientData = datatable2.row( $(this) ).data();
+		            var replace1 = dSelectedClientData.rut.split('.').join('');
+  					var replace2 = replace1.replace('-', '');
+  					dSelectedClientRut = replace2;
+
+		            $('#habButton').prop('disabled', false);
+	        	}
+    		});
+		}
+
+
+
+		$('#createButton').on('click', function(){
+			$('#clientModal').modal();
+			$('#modal_title').text('Agregar un nuevo cliente al sistema');
+			$('#modal_body').html(`
+			<div class="box-shadows form-horizontal" style="padding:5px;"> 
+
+			<fieldset>
+
+				<div class="form-group">
+				  <label class="col-md-4 control-label">Razón social</label>  
+				  <div class="col-md-4 inputGroupContainer">
+				  <div class="input-group">
+				  <span class="input-group-addon"><i class="fa fa-building" aria-hidden="true"></i></span>
+				  <input id="newClientName" placeholder="Nombre del cliente" class="form-control" type="text">
+				    </div>
+				  </div>
+				</div>
+
+
+				<div class="form-group">
+				  <label class="col-md-4 control-label" >Rut</label> 
+				    <div class="col-md-4 inputGroupContainer">
+				    <div class="input-group">
+				  <span class="input-group-addon"><i class="fa fa-asterisk" aria-hidden="true"></i></span>
+				  <input id="newClientRut" placeholder="Rut del cliente" class="form-control" type="text">
+				    </div>
+				  </div>
+				</div>
+
+
+				<div class="form-group">
+				  <label class="col-md-4 control-label" >Emails</label> 
+				    <div class="col-md-4 inputGroupContainer">
+				    <div class="input-group">
+				  <span class="input-group-addon" style="padding-bottom:3px !important; padding-top:3px !important; padding-left:4px !important; padding-right:4px !important;"><button id="addEmail"><i class="fa fa-plus fa-2x" aria-hidden="true"></i></button></span>
+				  <input id="newClientEmail" placeholder="Email del cliente" class="form-control" type="text">
+				    </div>
+				  </div>
+				</div>
+
+				
+				<div class="form-group">
+				    <div class="col-md-4 col-md-offset-4">
+						<ul id="email-list" class="list-group">
+						</ul>
+					</div>
+				</div>
+								
+	 
+				<div class="form-group">
+				  <label class="col-md-4 control-label">Dirección</label>
+				  <div class="col-md-4 inputGroupContainer">
+			    	<div class="input-group">
+			        <span class="input-group-addon"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
+			        <textarea class="form-control" id="newClientAddress" placeholder="Dirección del cliente"></textarea>
+			  		</div>
+				  </div>
+				</div>
+
+				<div style="display: none;" id="form_messages"></div>
+
+				<!-- Button -->
+				<div class="form-group">
+				  <label class="col-md-4 control-label"></label>
+				  <div class="col-md-4">
+				    <button id="sendNewClient" class="btn btn-primary" >Crear <span class="glyphicon glyphicon-send"></span></button>
+				  </div>
+				</div>
+
+			</fieldset>
+
+		</div>
+			`)
+		});
+
+		$('#modButton').on('click', function() {
+			$('#clientModal').modal();
+			$('#modal_title').text('Modificar '+ selectedClientData.name);
+
+			$.ajax({
+				url: 'api/getClient',
+				type: 'POST',
+				data: {rut: selectedClientRut},
+			})
+			.done(function(data) {
+				console.log(data);
+
+				$('#modal_body').html(`
+                <div class="box-shadows form-horizontal" style="padding:5px;"> 
+
+                <fieldset>
+
+                    <div class="form-group">
+                    <label class="col-md-4 control-label">Razón social</label>  
+                    <div class="col-md-4 inputGroupContainer">
+                    <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-building" aria-hidden="true"></i></span>
+                    <input value="${data.name}" id="modClientName" placeholder="Nombre del cliente" class="form-control" type="text">
+                        </div>
+                    </div>
+                    </div>
+
+
+                    <div class="form-group">
+                    <label class="col-md-4 control-label" >Rut</label> 
+                        <div class="col-md-4 inputGroupContainer">
+                        <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-asterisk" aria-hidden="true"></i></span>
+                    <input value="${$.formatRut(data._id)}" id="modClientRut" placeholder="Rut del cliente" class="form-control" type="text" disabled>
+                        </div>
+                    </div>
+                    </div>
+
+
+                    <div class="form-group">
+                    <label class="col-md-4 control-label" >Emails</label> 
+                        <div class="col-md-4 inputGroupContainer">
+                        <div class="input-group">
+                    <span class="input-group-addon" style="padding-bottom:3px !important; padding-top:3px !important; padding-left:4px !important; padding-right:4px !important;"><button id="addModEmail"><i class="fa fa-plus fa-2x" aria-hidden="true"></i></button></span>
+                    <input id="modClientEmail" placeholder="Email del cliente" class="form-control" type="text">
+                        </div>
+                    </div>
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <div class="col-md-4 col-md-offset-4">
+                            <ul id="email-list" class="list-group">
+                            </ul>
+                        </div>
+                    </div>
+                                    
+        
+                    <div class="form-group">
+                    <label class="col-md-4 control-label">Dirección</label>
+                    <div class="col-md-4 inputGroupContainer">
+                        <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
+                        <textarea class="form-control" id="modClientAddress" placeholder="Dirección del cliente">${data.address}</textarea>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div style="display: none;" id="form_messages"></div>
+
+                    <!-- Button -->
+                    <div class="form-group">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        <button id="sendModClient" class="btn btn-primary" >Modificar <span class="glyphicon glyphicon-send"></span></button>
+                    </div>
+                    </div>
+
+                </fieldset>
+
+            </div>
+			`)
+
+			$.each(data.emails, function(index, val) {
+				$('#email-list').append('<li class="list-group-item"><a href="#" class="btn btn-default btn-xs"><i class="fa fa-times-circle" aria-hidden="true"></i></a>'+val+'</li>');
+			});
+
+			})
+			.fail(function() {
+				console.log("error");
+			});
+			
+
+
+		});
+
+
+		$('#habButton').on('click', function() {
+			swal({
+			  title: '¿Estás seguro?',
+			  text: 'Podrás volver a deshabilitar este cliente desde la pestaña "clientes habilitados"',
+			  type: 'warning',
+			  showCancelButton: true,
+			  confirmButtonColor: '#3085d6',
+			  cancelButtonColor: '#d33',
+			  confirmButtonText: 'Si, habilitar!',
+			  cancelButtonText: 'No, cancelar!',
+			  confirmButtonClass: 'btn btn-primary',
+			  cancelButtonClass: 'btn btn-default',
+			  buttonsStyling: false,
+			  animation: false,
+  			  customClass: 'animated tada'
+			}).then(function () {
+				$.ajax({
+					url: '/api/enableClient',
+					type: 'POST',
+					data: {rut: dSelectedClientRut},
+				})
+				.done(function(data) {
+					if (data.ok) {
+
+						createLog('Clientes deshabilitados', 'Se cambió el estado del cliente '+ dSelectedClientRut +' ('+dSelectedClientData.name+') de deshabilitado a habilitado');
+
+						dSelectedClientRow.remove().draw();
+						
+						var newRowAdded = datatable.row.add( {
+							"name": dSelectedClientData.name,
+					        "rut": dSelectedClientData.rut
+						}).draw().node();
+
+						$( newRowAdded ).css( 'color', '#f1c40f' );
+
+						setTimeout(function() {
+							$( newRowAdded ).css( 'color', 'black' );
+						}, 6000);
+						
+
+						$('#habButton').prop('disabled', true);
+						swal(
+							'Habilitado!',
+						    data.ok,
+						    'success'
+						)
+					}
+
+				})
+				.fail(function() {
+					console.log("error al habilitar cliente");
+				});
+				
+			});
+		});
+
+
+		$('#desButton').on('click', function() {
+			swal({
+			  title: '¿Estás seguro?',
+			  text: 'Podrás revertir esta acción desde la pestaña "clientes deshabilitados"',
+			  type: 'warning',
+			  showCancelButton: true,
+			  confirmButtonColor: '#3085d6',
+			  cancelButtonColor: '#d33',
+			  confirmButtonText: 'Si, deshabilitar!',
+			  cancelButtonText: 'No, cancelar!',
+			  confirmButtonClass: 'btn btn-primary',
+			  cancelButtonClass: 'btn btn-default',
+			  buttonsStyling: false,
+			  animation: false,
+  			  customClass: 'animated tada'
+			}).then(function () {
+				$.ajax({
+					url: '/api/disableClient',
+					type: 'DELETE',
+					data: {rut: selectedClientRut},
+				})
+				.done(function(data) {
+					if (data.ok) {
+
+						createLog('Clientes habilitados', 'Se cambió el estado del cliente '+ selectedClientRut +' ('+selectedClientData.name+') de habilitado a deshabilitado');
+
+						selectedClientRow.remove().draw();
+
+						var newRowAdded = datatable2.row.add( {
+							"name": selectedClientData.name,
+					        "rut": selectedClientData.rut
+						}).draw().node();
+
+
+						$( newRowAdded ).css( 'color', '#f1c40f' );
+
+						setTimeout(function() {
+							$( newRowAdded ).css( 'color', 'black' );
+						}, 6000);
+
+						$('#modButton').prop('disabled', true);
+		            	$('#desButton').prop('disabled', true);
+						swal(
+							'Deshabilitado!',
+						    data.ok,
+						    'success'
+						)
+					}
+				})
+				.fail(function() {
+					console.log("error al deshabilitar cliente");
+				});
+			});
+		});
+
+		$('#modal_body').on('keyup', '#newClientRut', function(e){
+			var rut = $('#newClientRut').val();
+			var rutFormated = $.formatRut(rut);
+
+			$('#newClientRut').val(rutFormated.split(' ').join(''));
+
+			if($.validateRut(rutFormated)) {
+				$('#newClientRut').css('border', 'solid 2px green');				
+			}else {
+				$('#newClientRut').css('border', 'solid 2px red');
+			}
+		});
+
+		$('#modal_body').on('keyup', '#modClientRut', function(e){
+			var rut = $('#modClientRut').val();
+			var rutFormated = $.formatRut(rut);
+
+			$('#modClientRut').val(rutFormated.split(' ').join(''));
+
+			if($.validateRut(rutFormated)) {
+				$('#modClientRut').css('border', 'solid 2px green');				
+			}else {
+				$('#modClientRut').css('border', 'solid 2px red');
+			}
+		});
+		
+
+		$('#modal_body').on('click', '#addEmail', function(){
+			var addEmail = $('#newClientEmail').val();
+			
+			if(isEmail(addEmail)) {
+				$('#email-list').append('<li class="list-group-item"><a href="#" class="btn btn-default btn-xs"><i class="fa fa-times-circle" aria-hidden="true"></i></a> '+addEmail+'</li>');
+				$('#newClientEmail').val('');
+			}else {
+				$('#form_messages').append(`<div class="alert alert-danger" role="alert">Ingrese un correo válido</div>`);
+				$('#form_messages').slideDown({ opacity: "show" }, "slow");
+
+				setTimeout(function() {
+					$('#form_messages').empty();
+				}, 4000);
+			}
+		});
+
+		$('#modal_body').on('click', '#addModEmail', function(){
+			var addEmail = $('#modClientEmail').val();
+			
+			if(isEmail(addEmail)) {
+				$('#email-list').append('<li class="list-group-item"><a href="#" class="btn btn-default btn-xs"><i class="fa fa-times-circle" aria-hidden="true"></i></a> '+addEmail+'</li>');
+				$('#modClientEmail').val('');
+			}else {
+				$('#form_messages').append(`<div class="alert alert-danger" role="alert">Ingrese un correo válido</div>`);
+				$('#form_messages').slideDown({ opacity: "show" }, "slow");
+
+				setTimeout(function() {
+					$('#form_messages').empty();
+				}, 4000);
+			}
+		});
+
+		$('#modal_body').on('click', 'a', function() { // eliminar los correos agregados
+    		$(this).closest('li').remove();
+		});
+
+
+		$('#modal_body').on('click', '#sendModClient', function(){
+			$('#sendModClient').prop('disabled', true);
+
+			var c_name = $('#modClientName').val().toUpperCase();
+			var c_rut = $('#modClientRut').val();
+			var c_addr = $('#modClientAddress').val();
+			var c_emails = [];
+			var step = 0;
+			
+			var replace1 = c_rut.split('.').join('');
+  			var replace2 = replace1.replace('-', '');
+
+  			console.log(selectedClientRut, replace2);
+
+			$.each($('#email-list')[0].children, function(index, val) {
+				c_emails.push(val.innerText);
+			});
+
+
+			if(c_name.length < 3) {
+				$('#form_messages').append(`<div class="alert alert-danger" role="alert">Nombre del cliente debe tener un mínimo de 3 caracteres.</div>`);
+				$('#form_messages').slideDown({ opacity: "show" }, "slow");
+				$('#sendModClient').prop('disabled', false);
+			} else {
+				step++;
+			}
+
+			if(!$.validateRut(c_rut)) {
+				$('#form_messages').append(`<div class="alert alert-danger" role="alert">Ingrese un Rut correcto.</div>`);
+				$('#form_messages').slideDown({ opacity: "show" }, "slow");
+				$('#sendModClient').prop('disabled', false);
+			} else {
+				step++;
+			}
+
+			if(step === 2) {
+				var stringEmails = JSON.stringify(c_emails);
+
+				$.ajax({
+					url: 'api/modClient',
+					type: 'POST',
+					data: {name: c_name, rut: replace2, address: c_addr, emails: stringEmails}
+				})
+				.done(function(data) {
+					if (data.ok) {
+						createLog('Clientes habilitados', 'Se modificó el cliente '+ replace2 +' ('+c_name+')');
+
+						$('#clientModal').modal('hide');
+						selectedClientRow.remove().draw();
+						var newRowAdded = datatable.row.add( {
+							"name": c_name,
+					        "rut": c_rut
+						}).draw().node();
+
+
+						$( newRowAdded ).css( 'color', '#f1c40f' );
+
+						setTimeout(function() {
+							$( newRowAdded ).css( 'color', 'black' );
+						}, 6000);
+
+						$('#modButton').prop('disabled', true);
+		            	$('#desButton').prop('disabled', true);
+
+						swal({
+							title: 'Modificado!',
+						  	text: data.ok,
+						  	type: 'success',
+						  	timer: 3000
+						})
+					} else if(data.error) {
+						swal({
+							title: 'No existe',
+						  	text: data.error,
+						  	type: 'error',
+						  	timer: 4000
+						})
+
+						$('#sendModClient').prop('disabled', false);
+					}
+				})
+				.fail(function() {
+					console.log("error");
+				});
+				
+			}
+
+		});
+
+
+		$('#modal_body').on('click', '#sendNewClient', function(){
+			$('#sendNewClient').prop('disabled', true);
+
+			var c_name = $('#newClientName').val().toUpperCase();
+			var c_rut = $('#newClientRut').val();
+			var c_addr = $('#newClientAddress').val();
+			var c_emails = [];
+			var step = 0;
+			
+			var replace1 = c_rut.split('.').join('');
+  			var replace2 = replace1.replace('-', '');
+
+			$.each($('#email-list')[0].children, function(index, val) {
+				c_emails.push(val.innerText);
+			});
+
+
+			if(c_name.length < 3) {
+				$('#form_messages').append(`<div class="alert alert-danger" role="alert">Nombre del cliente debe tener un mínimo de 3 caracteres.</div>`);
+				$('#form_messages').slideDown({ opacity: "show" }, "slow");
+				$('#sendNewClient').prop('disabled', false);
+			} else {
+				step++;
+			}
+
+			if(!$.validateRut(c_rut)) {
+				$('#form_messages').append(`<div class="alert alert-danger" role="alert">Ingrese un Rut correcto.</div>`);
+				$('#form_messages').slideDown({ opacity: "show" }, "slow");
+				$('#sendNewClient').prop('disabled', false);
+			} else {
+				step++;
+			}
+
+			if(step === 2) {
+				var stringEmails = JSON.stringify(c_emails);
+
+				$.ajax({
+					url: 'api/newClient',
+					type: 'POST',
+					data: {name: c_name, rut: replace2, address: c_addr, emails: stringEmails}
+				})
+				.done(function(data) {
+					if (data.ok) {
+
+						createLog('Clientes habilitados', 'Se creó el cliente '+ replace2 +' ('+c_name+')');
+
+						$('#clientModal').modal('hide');
+
+						var newRowAdded = datatable.row.add( {
+							"name": c_name,
+					        "rut": c_rut
+						}).draw().node();
+
+
+						$( newRowAdded ).css( 'color', '#f1c40f' );
+
+						setTimeout(function() {
+							$( newRowAdded ).css( 'color', 'black' );
+						}, 6000);
+
+						swal({
+							title: 'Agregado!',
+						  	text: data.ok,
+						  	type: 'success',
+						  	timer: 3000
+						})
+					} else if(data.error) {
+						swal({
+							title: 'Existe',
+						  	text: data.error,
+						  	type: 'error',
+						  	timer: 4000
+						})
+
+						$('#sendNewClient').prop('disabled', false);
+					}
+				})
+				.fail(function() {
+					console.log("error");
+				});
+				
+			}
+
+		});
+
+		function isEmail(email) {
+		  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		  return regex.test(email);
+        }
+        
+        NProgress.done(); /* TODO CARGADO! */
+	});
+
+	
+</script>
+{{/extend}}
