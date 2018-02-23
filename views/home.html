@@ -7,27 +7,159 @@
         border: 1px solid #3498db;
         border-radius: 5px;
     }
+
+    #advancedSearchCollapse input[type=checkbox] {
+        transform: scale(2.0);
+    }
+
+    .advancedSearchSelectedOption {
+        border: 3px solid #3498db;
+    }
 </style> 
 
 {{/extend}}
-<!--
-<ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
-    <li class="nav-item">
-        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Michcom</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Tronit</a>
-    </li>
-</ul>
-
-<div class="tab-content" id="pills-tabContent">
-    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">...</div>
-    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">...</div>
-</div>
--->
 <div class="row">
     <div class="card bg-light mb-3 col-md-12">
+        <button id="advancedSearch" type="button" data-toggle="collapse" data-target="#advancedSearchCollapse" aria-expanded="false" aria-controls="advancedSearchCollapse" style="width:200px;" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Búsqueda avanzada</button>
+            
         <div class="card-body">
+            <div class="collapse" id="advancedSearchCollapse">  
+                <div class="card">
+                
+                    <div class="card-header">Filtros de búsqueda</div>            
+                    <div class="card-body">
+                        <div class="row" style="margin:10px;">
+                            <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" checked>
+                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Número</label>
+                            </div>
+                            <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Monto</label>
+                            </div>
+                            <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Iva</label>
+                            </div>
+                            <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option4">
+                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Tipo</label>
+                            </div>
+                            <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox5" value="option5">
+                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Descripción</label>
+                            </div>
+                            <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox6" value="option6">
+                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Estado</label>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label"><i class="fa fa-asterisk" aria-hidden="true"></i> Número de factura</label>
+                                    <div class="col-md-12 inputGroupContainer">
+                                        <div class="input-group">
+                                            <input id="advancedSearchInvoiceNumber" placeholder="N° de factura (exacto)" class="form-control advancedSearchSelectedOption" type="number" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label" ><i class="fa fa-usd" aria-hidden="true"></i> Monto</label>
+                                    <div class="col-md-12 inputGroupContainer">
+                                        <div class="input-group">
+                                            <input id="advancedSearchAmount" placeholder="Monto de factura (exacto)" class="form-control" type="number" min="1" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label" ><i class="fa fa-usd" aria-hidden="true"></i> Iva</label>
+                                    <div class="col-md-12 inputGroupContainer">
+                                        <div class="input-group">
+                                            <input id="advancedSearchIva" placeholder="Iva de factura (exacto)" class="form-control" type="number" min="1" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label"><i class="fa fa-list" aria-hidden="true"></i> Tipo de factura</label>
+                                    <div class="col-md-12 selectContainer">
+                                        <div class="input-group">
+                                            <select id="advancedSearchType" class="form-control selectpicker" disabled>
+                                                <option selected value="product">Producto</option>
+                                                <option value="service">Servicio</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label"><i class="fa fa-list" aria-hidden="true"></i> Razón social</label>
+                                    <div class="col-md-12 selectContainer">
+                                        <div class="input-group">
+                                            <select id="advancedSearchBusiness" class="form-control selectpicker" disabled >
+                                                <option selected value="Michcom Ltda">Michcom Ltda</option>
+                                                <option value="Tronit Ltda">Tronit Ltda</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label"><i class="fa fa-list" aria-hidden="true"></i> Estado</label>
+                                    <div class="col-md-12 selectContainer">
+                                        <div class="input-group">
+                                            <select id="advancedSearchStatus" class="form-control selectpicker" disabled>
+                                                <option selected value="PAGADO">PAGADA</option>
+                                                <option value="PENDIENTE">PENDIENTE</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label"><i class="fa fa-pencil" aria-hidden="true"></i> Descripción</label>
+                                    <div class="col-md-12 inputGroupContainer">
+                                        <div class="input-group">
+                                            <textarea class="form-control" id="advancedSearchDescription" placeholder="Descripción de la factura" disabled></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-4">
+                                <!-- Button -->
+                                <div class="form-group">
+                                <label class="col-md-12 control-label"></label>
+                                <div class="col-md-12">
+                                    <button id="advancedSearchSend" class="btn btn-primary btn-lg btn-block" >Buscar <span><i class="fa fa-paper-plane" aria-hidden="true"></i></span></button>
+                                </div>
+                                </div>
+                            </div>
+                
+                            <div style="display: none;" id="form_messages"></div>
+                        </div>   
+                    </div>
+
+                </div>
+            </div>
+            <br>
             <div>
                 <table id="clientsTable" class="display nowrap table" cellspacing="0" width="100%">
                     <thead>

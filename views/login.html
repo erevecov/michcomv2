@@ -5,21 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Testing</title>
+    <title>Michcom intranet</title>
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        
+
         body {
+            margin: 0;
+            padding: 0;
+            /*  Background fallback in case of IE8 & down, or in case video doens't load, such as with slower connections  */
+            background: #333;
+            background-attachment: fixed;
+            background-size: cover;
+
             background-image: url("/public/img/wallpaper.jpg");
-            background-color: #cccccc;
             background-repeat: no-repeat;
-            background-size: auto;
-         }
+        }
+
+        /* The only rule that matters */
+        #video-background {
+            /*  making the video fullscreen  */
+            position: fixed;
+            right: 0; 
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+            width: auto; 
+            height: auto;
+            z-index: -100;
+        }
 
          #loginContainer {
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.2);
             color:rgba(255,255,255,0.8);
             position: fixed;
             height: 100%;
@@ -33,8 +51,8 @@
          }
 
          #logo img {
-            max-height: 150px;
-            width:50%;
+            max-height: 100px;
+            max-width:40%;
          }
 
          #forms {
@@ -52,6 +70,9 @@
 <body>
  
 <div class="container-fluid">
+        <video autoplay loop id="video-background" muted plays-inline>
+            <source src="/public/img/login.mp4" type="video/mp4">
+        </video>
     <div id="loginContainer">
         <center>  
         <div id="logo">
@@ -103,6 +124,8 @@
 
 $(document).ready(function() {
     $('#email').focus();
+    var vid = document.getElementById("video-background");
+    vid.playbackRate = 0.8;
 });
 
 String.prototype.capitalize = function() {

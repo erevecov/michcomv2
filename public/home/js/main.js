@@ -942,7 +942,9 @@ const chargeClientsTable = (clientsData) => {
   clientsTable = $('#clientsTable')
     .DataTable({
       "iDisplayLength": 100,
+      /*
       "dom": 'Bfrtip',
+      
       "buttons": [{
           extend: 'pdfHtml5',
           customize: function(doc) {
@@ -955,6 +957,7 @@ const chargeClientsTable = (clientsData) => {
         },
         'excel'
       ],
+      */
       "oLanguage": {
         "sSearch": "Buscar "
       },
@@ -1367,6 +1370,7 @@ $('#modal_body').on('click', '#reportCollapseButton', () =>  { // seleccionar e
     $('#collapseEmail').collapse('hide'); 
   }
 });
+
 
 $('#modal_body').on('click', '#sendEmailBtn', () =>  { // enviar reporte por correo
   var sendEmailsArr= Array.from($('#collapseEmail')[0].children);
