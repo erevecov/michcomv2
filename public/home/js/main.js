@@ -172,11 +172,11 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
     <div class="card bg-light mb-3">
         <div class="card-header text-center"><h2>FACTURAS</h2></div>
         <div class="card-body">
-            <table id="invoiceTable" class="display nowrap table table-condensed" cellspacing="0">
+            <table id="invoiceTable" style="width:100%;" class="display nowrap table table-condensed" cellspacing="0">
                 <thead>
                     <tr>
                         <th>N° Factura:</th>
-                        <th>Fecha:</th>
+                        <th>Fecha de pago:</th>
                         <th>Monto:</th>
                         <th>Descripción:</th>
                         <th>Empresa:</th>
@@ -950,10 +950,10 @@ const chargeClientsTable = (clientsData) => {
   clientsTable = $('#clientsTable')
     .DataTable({
       "iDisplayLength": 100,
-      /*
+      
       "dom": 'Bfrtip',
       
-      "buttons": [{
+      "buttons": [/*{
           extend: 'pdfHtml5',
           customize: function(doc) {
             doc.content.splice(1, 0, {
@@ -963,9 +963,20 @@ const chargeClientsTable = (clientsData) => {
             });
           }
         },
+        'excel'*/
+        {
+          extend: 'pdfHtml5',
+          customize: function ( doc ) {
+              doc.content.splice( 1, 0, {
+                  margin: [ 0, 0, 0, 12 ],
+                  alignment: 'center',
+                  image: base64logo
+              } );
+          }
+        },
         'excel'
       ],
-      */
+      
       "oLanguage": {
         "sSearch": "Buscar "
       },
