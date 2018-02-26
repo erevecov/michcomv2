@@ -966,6 +966,9 @@ const chargeClientsTable = (clientsData) => {
         'excel'*/
         {
           extend: 'pdfHtml5',
+          title: 'Clientes Michcom '+moment().format('DD/MM/YYYY hh:mm:ss'),
+          messageTop: null,
+          orientation: 'landscape',
           customize: function ( doc ) {
               doc.content.splice( 1, 0, {
                   margin: [ 0, 0, 0, 12 ],
