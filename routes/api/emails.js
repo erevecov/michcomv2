@@ -52,8 +52,8 @@ const emails = [
             uso mi correo para testing. En producción: mailOptions.to = to
         */
 
-        to.push('contabilidad@michcom.cl');
-        console.log(to);
+        mailOptions.to.push('contabilidad@michcom.cl');
+        console.log(mailOptions.to);
         mailOptions.html = html;
 
         return new Promise(resolve => {

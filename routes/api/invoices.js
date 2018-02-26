@@ -410,6 +410,74 @@ const invoices = [{ // Crear una factura
     }
   }
 },
+{ // Busqueda avanzada de factura
+  method: 'POST',
+  path: '/api/advancedSearchInvoice',
+  options: {
+    handler: (request, h) => {
+      let searchObj = JSON.parse(request.payload.searchObj);
+      let selector = {};
+      
+      if(searchObj.creationDate) {
+
+        let date = searchObj.creationDate.split('/')
+        let initSearchDate = `${date[2]}-${date[1]}-${date[0]}T00:00:00`
+        let endSearchDate = `${date[2]}-${date[1]}-${date[0]}T23:59:59`
+        
+        selector._id = {
+          "$gte": initSearchDate,
+          "$lte": endSearchDate
+        }
+      
+      } else {
+        selector._id = {
+          $gt: 0
+        }
+      };
+
+      if(searchObj.invoice) selector.invoice = parseInt(searchObj.invoice);
+      if(searchObj.amount) selector.amount = parseInt(searchObj.amount);
+
+      if(searchObj.type && searchObj.type == 'product') selector.business = 'Michcom Ltda';
+      if(searchObj.type && searchObj.type == 'service') selector.business = 'Tronit Ltda';
+
+      if(searchObj.status) {
+        selector.status = searchObj.status
+      } else {
+        selector.$not = {
+          status: 'disabled'
+        }
+      };
+
+      if(searchObj.description) {
+        selector.description = {
+          "$regex": "(?i)"+searchObj.description
+        }
+      }
+
+      selector.type = 'invoice';
+
+      return new Promise(resolve => {
+        db.find({
+          selector: selector
+        }, (err, result) => {
+          if (err) throw err
+
+          if (result.docs[0]) {
+            resolve(result.docs)
+          } else {
+            resolve({error: 'No se encontraron facturas en el sistema que coincidan con los parámetros seleccionados.'})
+          }
+        })
+      })
+    },
+    validate: {
+      payload: Joi.object().keys({
+        searchObj: Joi.string()
+      })
+    }
+  }
+},
 { // modificar factura
   method: 'POST',
   path: '/api/modInvoice',

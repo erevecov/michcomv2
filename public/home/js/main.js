@@ -1,4 +1,5 @@
 let clientsTable; // Tabla clientes
+let invoiceTable; // Tabla facturas
 let selectedClient; // Objeto que contiene los datos del cliente seleccionado;
 let selectedClientRow; // ROW Actual seleccionada de clientsTable
 let collapseReportStatus = 0;
@@ -240,11 +241,15 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
           "data": "reason"
         }
       ],
-      "columnDefs": [{
+      "columnDefs": [
+        /*{ "width": "30px", "targets": 0 },
+        { "width": "100px", "targets": 1 },*/
+        {
         "targets": [6, 7, 8],
         "visible": false,
         "searchable": false
-      }],
+       }
+      ],
       createdRow: (row, data, dataIndex) => {
         if (data.status == `PAGADO`) {
           totalClientPaidCount++;
@@ -253,6 +258,9 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
           totalClientOwedCount++;
           $(row).css('background', configColors.owed);
         }
+
+        if(data.business == 'Michcom Ltda') $(row).attr('id', 'invoice_'+data.invoice+'_product');
+        if(data.business == 'Tronit Ltda') $(row).attr('id', 'invoice_'+data.invoice+'_service');
       },
       initComplete: (settings, json) => {
         $('div.dataTables_filter input').focus();
@@ -989,6 +997,11 @@ const chargeClientsTable = (clientsData) => {
         } else if (data.owedStatus == `PENDIENTE`) {
           $(row).css('background', configColors.owed);
         }
+
+        var replace1 = data.rut.split('.').join('');
+        var replace2 = replace1.replace('-', '');
+
+        $(row).attr('id', replace2);
       },
       initComplete: function(settings, json) {
         $('div.dataTables_filter input').focus();

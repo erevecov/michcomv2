@@ -15,12 +15,17 @@
     .advancedSearchSelectedOption {
         border: 3px solid #3498db;
     }
+
+    #advancedSearchTableResults tr:hover {
+        background:#3498db !important;
+        cursor: pointer;
+    }
 </style> 
 
 {{/extend}}
 <div class="row">
     <div class="card bg-light mb-3 col-md-12">
-        <button id="advancedSearch" type="button" data-toggle="collapse" data-target="#advancedSearchCollapse" aria-expanded="false" aria-controls="advancedSearchCollapse" style="width:200px;" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Búsqueda avanzada</button>
+        <button id="advancedSearch" type="button" data-toggle="collapse" data-target="#advancedSearchCollapse" aria-expanded="false" aria-controls="advancedSearchCollapse" style="width:200px;" class="btn btn-primary float-right"><i class="fa fa-search" aria-hidden="true"></i> Búsqueda avanzada</button>
             
         <div class="card-body">
             <div class="collapse" id="advancedSearchCollapse">  
@@ -30,28 +35,28 @@
                     <div class="card-body">
                         <div class="row" style="margin:10px;">
                             <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" checked>
-                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Número</label>
+                                <input class="form-check-input" type="checkbox" id="advancedSearchCheckboxNumber" checked>
+                                <label class="form-check-label"> &nbsp; Número</label>
                             </div>
                             <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Monto</label>
+                                <input class="form-check-input" type="checkbox" id="advancedSearchCheckboxAmount">
+                                <label class="form-check-label"> &nbsp; Monto</label>
                             </div>
                             <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Iva</label>
+                                <input class="form-check-input" type="checkbox" id="advancedSearchCheckboxCreationDate">
+                                <label class="form-check-label"> &nbsp; Fecha de creación</label>
                             </div>
                             <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option4">
-                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Tipo</label>
+                                <input class="form-check-input" type="checkbox" id="advancedSearchCheckboxType">
+                                <label class="form-check-label"> &nbsp; Tipo</label>
                             </div>
                             <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox5" value="option5">
-                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Descripción</label>
+                                <input class="form-check-input" type="checkbox" id="advancedSearchCheckboxStatus">
+                                <label class="form-check-label"> &nbsp; Estado</label>
                             </div>
                             <div class="form-check form-check-inline col-md-2 col-xs-12" style="margin:2px;">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox6" value="option6">
-                                <label class="form-check-label" for="inlineCheckbox1"> &nbsp; Estado</label>
+                                <input class="form-check-input" type="checkbox" id="advancedSearchCheckboxDescription">
+                                <label class="form-check-label"> &nbsp; Descripción</label>
                             </div>
                         </div>
                         <br>
@@ -81,16 +86,16 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="col-md-12 control-label" ><i class="fa fa-usd" aria-hidden="true"></i> Iva</label>
+                                    <label class="col-md-12 control-label" ><i class="fa fa-calendar" aria-hidden="true"></i> Fecha de creación</label>
                                     <div class="col-md-12 inputGroupContainer">
                                         <div class="input-group">
-                                            <input id="advancedSearchIva" placeholder="Iva de factura (exacto)" class="form-control" type="number" min="1" disabled>
+                                            <input id="advancedSearchCreationDate" placeholder="Fecha de creación (Día/Mes/Año)" class="form-control" type="text" disabled>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                 
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="col-md-12 control-label"><i class="fa fa-list" aria-hidden="true"></i> Tipo de factura</label>
                                     <div class="col-md-12 selectContainer">
@@ -104,7 +109,7 @@
                                 </div>
                             </div>
                 
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="col-md-12 control-label"><i class="fa fa-list" aria-hidden="true"></i> Razón social</label>
                                     <div class="col-md-12 selectContainer">
@@ -124,7 +129,7 @@
                                     <div class="col-md-12 selectContainer">
                                         <div class="input-group">
                                             <select id="advancedSearchStatus" class="form-control selectpicker" disabled>
-                                                <option selected value="PAGADO">PAGADA</option>
+                                                <option selected value="PAGADO">PAGADO</option>
                                                 <option value="PENDIENTE">PENDIENTE</option>
                                             </select>
                                         </div>
@@ -148,15 +153,14 @@
                                 <div class="form-group">
                                 <label class="col-md-12 control-label"></label>
                                 <div class="col-md-12">
-                                    <button id="advancedSearchSend" class="btn btn-primary btn-lg btn-block" >Buscar <span><i class="fa fa-paper-plane" aria-hidden="true"></i></span></button>
+                                    <button id="advancedSearchSend" class="btn btn-primary btn-lg btn-block" >Buscar <i class="fa fa-search" aria-hidden="true"></i></button>
                                 </div>
                                 </div>
                             </div>
-                
-                            <div style="display: none;" id="form_messages"></div>
-                        </div>   
+                        </div>                  
+                        <div id="advancedSearchResults"></div>
                     </div>
-
+                    
                 </div>
             </div>
             <br>
@@ -180,7 +184,7 @@
 </div>
 
 <div class="row">
-    <div class="card bg-light col-md-4">
+    <div class="card col-md-4">
         <h3 class="card-header text-center">MONTOS ADEUDADOS</h3>
         <div class="card-body">
             <div class="row">
@@ -212,7 +216,7 @@
         </div>
     </div>
 
-    <div class="card bg-light col-md-4">
+    <div class="card col-md-4">
         <h3 class="card-header text-center">CLIENTES</h3>
         <div id="totalChart" class="card-body text-center">
             <br><br><br><br>
@@ -359,4 +363,233 @@
 
 {{#extend "js"}}
 <script src="/public/home/js/main.js"></script>
+<script>
+    let advancedSearchCheckboxNumber = 1;
+    let advancedSearchCheckboxAmount = 0;
+    let advancedSearchCheckboxCreationDate = 0;
+    let advancedSearchCheckboxType = 0;
+    let advancedSearchCheckboxStatus = 0;
+    let advancedSearchCheckboxDecription = 0;
+
+    let asInvoiceNumber = document.getElementById('advancedSearchInvoiceNumber');
+    let invalidChars = ['-', '+', 'e', '.', ',', '`', '´'];
+    asInvoiceNumber.addEventListener('keydown', function(e) {
+        if (invalidChars.includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+    asInvoiceNumber.addEventListener('input', function() {
+        this.value = this.value.replace(/[e\+\-]/gi, '');
+    });
+
+    let asInvoiceAmount = document.getElementById('advancedSearchAmount');
+    
+    asInvoiceAmount.addEventListener('keydown', function(e) {
+        if (invalidChars.includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+    asInvoiceAmount.addEventListener('input', function() {
+        this.value = this.value.replace(/[e\+\-]/gi, '');
+    });
+    
+
+    $('#advancedSearchCheckboxNumber').on('change', function(e) {
+        if(e.target.checked) {
+            advancedSearchCheckboxNumber = 1;
+            $('#advancedSearchInvoiceNumber').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchInvoiceNumber').prop('disabled', false);
+            $('#advancedSearchInvoiceNumber').focus();
+        } else {
+            advancedSearchCheckboxNumber = 0;
+            $('#advancedSearchInvoiceNumber').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchInvoiceNumber').prop('disabled', true);
+        }
+    });
+
+    $('#advancedSearchCheckboxAmount').on('change', function(e) {
+        if(e.target.checked) {
+            advancedSearchCheckboxAmount = 1;
+            $('#advancedSearchAmount').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchAmount').prop('disabled', false);
+            $('#advancedSearchAmount').focus();
+        } else {
+            advancedSearchCheckboxAmount = 0;
+            $('#advancedSearchAmount').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchAmount').prop('disabled', true);
+        }
+    });
+
+    $('#advancedSearchCheckboxCreationDate').on('change', function(e) {
+        if(e.target.checked) {
+            advancedSearchCheckboxCreationDate = 1;
+            $('#advancedSearchCreationDate').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchCreationDate').prop('disabled', false);
+            $('#advancedSearchCreationDate').focus();
+        } else {
+            advancedSearchCheckboxCreationDate = 0;
+            $('#advancedSearchCreationDate').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchCreationDate').prop('disabled', true);
+        }
+    });
+
+    $('#advancedSearchCheckboxType').on('change', function(e) {
+        if(e.target.checked) {
+            advancedSearchCheckboxType = 1;
+            $('#advancedSearchType').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchBusiness').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchType').prop('disabled', false);
+            $('#advancedSearchType').focus();
+        } else {
+            advancedSearchCheckboxType = 0;
+            $('#advancedSearchType').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchBusiness').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchType').prop('disabled', true);
+        }
+    });
+
+    $('#advancedSearchCheckboxStatus').on('change', function(e) {
+        if(e.target.checked) {
+            advancedSearchCheckboxStatus = 1;
+            $('#advancedSearchStatus').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchStatus').prop('disabled', false);
+            $('#advancedSearchStatus').focus();
+        } else {
+            advancedSearchCheckboxStatus = 0;
+            $('#advancedSearchStatus').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchStatus').prop('disabled', true);
+        }
+    });
+
+    $('#advancedSearchCheckboxDescription').on('change', function(e) {
+        if(e.target.checked) {
+            advancedSearchCheckboxDescription = 1;
+            $('#advancedSearchDescription').addClass('advancedSearchSelectedOption');
+            $('#advancedSearchDescription').prop('disabled', false);
+            $('#advancedSearchDescription').focus()
+        } else {
+            advancedSearchCheckboxDescription = 0;
+            $('#advancedSearchDescription').removeClass('advancedSearchSelectedOption');
+            $('#advancedSearchDescription').prop('disabled', true);
+        }
+    });
+
+
+    $('#advancedSearchType').on('change',function() {
+        if ($('#advancedSearchType').val() === 'product') {
+            $("#advancedSearchBusiness").val('Michcom Ltda');
+        } else if ($('#advancedSearchType').val() === 'service') {
+            $("#advancedSearchBusiness").val('Tronit Ltda');
+        }
+    });
+
+    $('#advancedSearchCreationDate').daterangepicker({
+        "locale": {
+            "format": "DD/MM/YYYY",
+            "daysOfWeek": [
+            "Dom",
+            "Lun",
+            "Mar",
+            "Mie",
+            "Jue",
+            "Vie",
+            "Sab"
+            ],
+            "monthNames": [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre"
+            ],
+            "firstDay": 1
+        },
+        drops: "up",
+        singleDatePicker: true,
+        showDropdowns: true
+    });
+
+    $('#advancedSearchSend').on('click', function() {
+        let advancedSearchFullObj = {}
+
+        if(advancedSearchCheckboxNumber == 1) advancedSearchFullObj.invoice = $('#advancedSearchInvoiceNumber').val();
+        if(advancedSearchCheckboxAmount == 1) advancedSearchFullObj.amount = $('#advancedSearchAmount').val();
+        if(advancedSearchCheckboxCreationDate == 1) advancedSearchFullObj.creationDate = $('#advancedSearchCreationDate').val();
+        if(advancedSearchCheckboxType == 1) advancedSearchFullObj.type = $('#advancedSearchType').val();
+        if(advancedSearchCheckboxStatus == 1) advancedSearchFullObj.status = $('#advancedSearchStatus').val();
+        if(advancedSearchCheckboxDescription == 1) advancedSearchFullObj.description = $('#advancedSearchDescription').val();
+
+        $('#advancedSearchResults').html('<center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center>')
+        ajax({
+            url: 'api/advancedSearchInvoice',
+            type: 'POST',
+            data: {searchObj: JSON.stringify(advancedSearchFullObj)}
+        }).then(data=> {
+            $('#advancedSearchResults').empty();
+
+            if(!data.error) {
+
+                $('#advancedSearchResults').html(`
+                    <table id="advancedSearchTable" class="table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Número de factura</th>
+                                <th>Rut del cliente</th>
+                                <th>Estado de la factura</th>
+                                <th>Tipo de factura</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="advancedSearchTableResults"></tbody>
+                    </table>
+                `)
+                data.forEach(element => {
+                    $('#advancedSearchTableResults').append(`
+                        <tr onclick="selectClientInvoice('${element.client}', ${element.invoice}, '${element.invoice_type}')">
+                            <td>${element.invoice}</td>
+                            <td>${$.formatRut(element.client)}</td>
+                            <td>${element.status}</td>
+                            <td>${element.invoice_type} (${element.business})</td>
+                            <td>${element.description}</td>
+                        </tr>
+                    `)
+                });
+            } else {
+                $('#advancedSearchResults').html(`
+                    <div class="alert alert-dismissible alert-warning">
+                        <h4 class="alert-heading">${data.error}</h4>
+                    </div>
+                `)
+            }
+            console.log(data);
+        })
+    })
+
+    $('#advancedSearch').on('click', () => {
+        setTimeout(() => {
+            $('#advancedSearchInvoiceNumber').focus();
+        }, 100);
+    })
+
+    const selectClientInvoice = (client, invoice, type) => {
+        $('#'+client).dblclick();
+
+        let searchInvoiceInterval = setInterval(() => {
+            if($('#invoice_'+invoice+'_'+type).length != 0) {
+                //invoiceTable.search(invoice).draw();
+                $('#invoice_'+invoice+'_'+type).dblclick();
+                window.clearInterval(searchInvoiceInterval);
+            }
+        }, 100);
+        
+    }
+
+</script>
 {{/extend}}
