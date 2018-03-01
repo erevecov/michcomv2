@@ -255,7 +255,10 @@
 				.done(function(data) {
 					if (data.ok) {
 
-						createLog('Usuarios habilitados', 'Se cambió el estado del usuario '+ selectedUserData.email +' ('+selectedUserData.name+' '+selectedUserData.lastname+') de habilitado a deshabilitado');
+						createLog({
+							form: 'Usuarios',
+							desc: 'Se cambió el estado del usuario '+ selectedUserData.email +' ('+selectedUserData.name+' '+selectedUserData.lastname+') de habilitado a deshabilitado'
+						});
 
 						selectedUserRow.remove().draw();
 
@@ -292,12 +295,12 @@
 		$('#habButton').on('click', function() {
 			swal({
 			  title: '¿Estás seguro?',
-			  text: 'Podrás volver a habilitar este cliente desde la pestaña "usuarios habilitados"',
+			  text: 'Podrás volver a deshabilitar este cliente desde la pestaña "usuarios habilitados"',
 			  type: 'warning',
 			  showCancelButton: true,
 			  confirmButtonColor: '#3085d6',
 			  cancelButtonColor: '#d33',
-			  confirmButtonText: 'Si, deshabilitar!',
+			  confirmButtonText: 'Si, habilitar!',
 			  cancelButtonText: 'No, cancelar!',
 			  confirmButtonClass: 'btn btn-primary',
 			  cancelButtonClass: 'btn btn-default',
@@ -313,7 +316,10 @@
 				.done(function(data) {
 					if (data.ok) {
 
-						createLog('Usuarios deshabilitados', 'Se cambió el estado del usuario '+ dSelectedUserData.email +' ('+dSelectedUserData.name+' '+dSelectedUserData.lastname+') de deshabilitado a habilitado');
+						createLog({
+							form: 'Usuarios',
+							desc: 'Se cambió el estado del usuario '+ dSelectedUserData.email +' ('+dSelectedUserData.name+' '+dSelectedUserData.lastname+') de deshabilitado a habilitado'
+						});
 
 						dSelectedUserRow.remove().draw();
 
@@ -485,7 +491,11 @@
 						)
 						$('#sendNewUser').prop('disabled', false);
 					}else if(data.ok) {
-						createLog('Crear usuario', 'Se creó el usuario '+c_email+' ('+c_name+' '+c_lastname+')');
+		
+						createLog({
+							form: 'Usuarios',
+							desc: 'Se creó el usuario '+c_email+' ('+c_name+' '+c_lastname+')'
+						});
 
 						swal(
 							'Usuario creado correctamente!',

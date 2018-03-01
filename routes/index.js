@@ -7,11 +7,12 @@ import APIInvoices from './api/invoices';
 import APITools from './api/tools';
 import APILogs from './api/logs';
 import APIEmails from './api/emails';
-
+import APIHostings from './api/hostings';
 
 import Clients from './clients';
 import Users from './users';
 import Logs from './logs';
+import Hostings from './hostings';
 
 import loginHandler from './handlers/loginHandler';
 import logoutHandler from './handlers/logoutHandler';
@@ -85,13 +86,15 @@ const Routes = [].concat(
     Clients,
     Users,
     Logs,
+    Hostings,
     // default404,
     APIUsers,
     APIClients,
     APIInvoices,
     APITools,
     APILogs,
-    APIEmails
+    APIEmails,
+    APIHostings
 );
 
 export default Routes;

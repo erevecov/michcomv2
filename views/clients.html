@@ -24,7 +24,7 @@
 <div class="tab-content">
     <div class="tab-pane fade show active" id="enabled_clients" role="tabpanel" aria-labelledby="enables-tab">
         <div class="row">
-            <div class="col-md-2 col-xs-12 box-shadows">
+            <div class="col-md-2 col-xs-12">
                 <br>
                 <button class="btn btn-primary btn-block" id="createButton">
                     <i class="fa fa-plus" aria-hidden="true"></i> Crear
@@ -427,7 +427,10 @@
 				.done(function(data) {
 					if (data.ok) {
 
-						createLog('Clientes deshabilitados', 'Se cambió el estado del cliente '+ dSelectedClientRut +' ('+dSelectedClientData.name+') de deshabilitado a habilitado');
+						createLog({
+							form: 'Clientes',
+							desc: 'Se cambió el estado del cliente '+ dSelectedClientRut +' ('+dSelectedClientData.name+') de deshabilitado a habilitado'
+						});
 
 						dSelectedClientRow.remove().draw();
 						
@@ -484,7 +487,10 @@
 				.done(function(data) {
 					if (data.ok) {
 
-						createLog('Clientes habilitados', 'Se cambió el estado del cliente '+ selectedClientRut +' ('+selectedClientData.name+') de habilitado a deshabilitado');
+						createLog({
+							form: 'Clientes',
+							desc: 'Se cambió el estado del cliente '+ selectedClientRut +' ('+selectedClientData.name+') de habilitado a deshabilitado'
+						});
 
 						selectedClientRow.remove().draw();
 
@@ -624,7 +630,10 @@
 				})
 				.done(function(data) {
 					if (data.ok) {
-						createLog('Clientes habilitados', 'Se modificó el cliente '+ replace2 +' ('+c_name+')');
+						createLog({
+							form: 'Clientes',
+							desc: 'Se modificó el cliente '+ replace2 +' ('+c_name+')'
+						});
 
 						$('#clientModal').modal('hide');
 						selectedClientRow.remove().draw();
@@ -712,8 +721,11 @@
 				})
 				.done(function(data) {
 					if (data.ok) {
-
-						createLog('Clientes habilitados', 'Se creó el cliente '+ replace2 +' ('+c_name+')');
+						
+						createLog({
+							form: 'Clientes',
+							desc: 'Se creó el cliente '+ replace2 +' ('+c_name+')'
+						});						
 
 						$('#clientModal').modal('hide');
 

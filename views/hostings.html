@@ -1,0 +1,183 @@
+{{!< layout/default}}
+
+{{#extend "css"}}
+<style>
+	
+</style>
+{{/extend}}
+
+<nav>
+<div class="nav nav-pills mb-3 nav-justified" role="tablist"> 
+    <a class="nav-item nav-link active" id="clients-tab" data-toggle="tab" role="tab" aria-controls="clients_tab" aria-selected="true" href="#hosting_clients">Clientes</a>
+    <a class="nav-item nav-link" id="packages-tab" data-toggle="tab" role="tab" aria-controls="packages_tab" aria-selected="false" href="#hosting_packages">Paquetes</a> 
+</div>
+</nav>
+   
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="hosting_clients" role="tabpanel" aria-labelledby="clients-tab">
+        <div class="row">
+            <div class="col-md-2 col-xs-12 box-shadows">
+                <br>
+                <button class="btn btn-primary btn-block" id="createButton">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Agregar
+                </button>
+                <br>
+                <button class="btn btn-warning btn-block" id="modButton" disabled>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Modificar
+                </button>
+                <br>	
+                <button class="btn btn-danger btn-block" id="delButton" disabled>
+                    <i class="fa fa-times" aria-hidden="true"></i> Eliminar
+                </button>
+                <br>		
+            </div>
+
+            <div class="col-md-10 col-xs-12 box-shadows table-responsive">
+                <table id="clientsTable" class="display nowrap table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Paquete</th>
+                                <th>Monto</th>
+                                <th>Fecha de creación</th>
+                            </tr>
+                        </tr>
+                    </thead>		 
+                </table>
+                <div id="loadingClients">
+                    <center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="hosting_packages" role="tabpanel" aria-labelledby="packages-tab">
+        <div class="row">
+            <div class="col-md-2 col-xs-12">
+                <br>
+                <button class="btn btn-primary btn-block" id="createButton">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Agregar
+                </button>
+                <br>
+                <button class="btn btn-warning btn-block" id="modButton" disabled>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Modificar
+                </button>
+                <br>	
+                <button class="btn btn-danger btn-block" id="delButton" disabled>
+                    <i class="fa fa-times" aria-hidden="true"></i> Eliminar
+                </button>
+                <br>		
+            </div>
+
+            <div class="col-md-10 col-xs-12 box-shadows table-responsive">
+                <table id="packagesTable" class="display nowrap table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Nombre del paquete</th>
+                            <th>Monto por defecto</th>
+                        </tr>
+                    </thead>		 
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal -->
+
+<div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="modal_title">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal_title"></h4>
+      </div>
+      <div class="modal-body" id="modal_body"></div>
+      <div class="modal-footer" id="modal_footer"></div>
+    </div>
+  </div>
+</div>
+
+{{#extend "js"}}
+<script>
+let clientsTable;
+let packagesTable;
+
+$(document).ready(()=>{
+    chargeClientsTable();
+
+})
+
+const chargeClientsTable = () => {
+    clientsTable = $('#clientsTable')
+    .DataTable( {
+        'iDisplayLength': 100,
+        'oLanguage': {
+            'sSearch': ''
+        },
+        'responsive': true,
+        'columns' : [ 
+            {'data' : 'clientName'}, 
+            {'data' : 'package'},
+            {'data' : 'amount'},
+            {'data' : 'creationDate'}
+        ],
+        createdRow: (row, data, dataIndex) => {
+            console.log(data)
+           //$(row).attr('id', '');
+        },
+        initComplete: function(settings, json) {
+             $.ajax({
+                url: 'api/hosting/clients'
+            })
+            .done(function(data) {
+                if (!data.error) {
+                    $.each(data, function(index, val) {
+                        clientsData.push({
+                            name: val.name,
+                            rut: $.formatRut(val._id)
+                        })
+                    });
+
+                    datatable.rows.add(clientsData).draw();
+                    
+                } else {
+                    toastr.warning(data.error)
+                }
+                $('#loadingClients').empty();
+            })
+            .fail(function() {
+                console.log("error al cargar clientes");
+                $('#loadingClients').empty();
+            });
+          }
+    });
+
+
+    $('#table tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+            $('#modButton').prop('disabled', true);
+            $('#desButton').prop('disabled', true);
+        } else {
+            datatable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            selectedClientRow = datatable.row( $(this) );
+            selectedClientData = datatable.row( $(this) ).data();
+            var replace1 = selectedClientData.rut.split('.').join('');
+              var replace2 = replace1.replace('-', '');
+              selectedClientRut = replace2;
+
+            $('#modButton').prop('disabled', false);
+            $('#desButton').prop('disabled', false);
+        }
+    });
+}
+
+NProgress.done(); /* TODO CARGADO! */
+</script>
+{{/extend}}

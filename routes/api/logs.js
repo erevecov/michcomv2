@@ -1,8 +1,9 @@
 import Joi from 'joi'
 import cloudant from '../../config/db.js'
 import moment from 'moment-timezone'
+import configEnv from '../../config/env_status.js';
 
-let db = cloudant.db.use('michcom_logs')
+let db = cloudant.db.use(configEnv.db_logs)
 
 const Logs = [{ // ver todos
   method: 'GET',
@@ -22,8 +23,7 @@ const Logs = [{ // ver todos
             'userEmail',
             'role',
             'form',
-            'description',
-            'extra'
+            'description'
           ],
           'sort': [{
             '_id': 'desc'
@@ -68,9 +68,10 @@ const Logs = [{ // ver todos
           userName: credentials.name + ' ' + credentials.lastname,
           role: credentials.role,
           form: form,
-          description: description,
-          extra: extra
+          description: description
         };
+
+        if(extra) logData.extra = extra;
 
         db.insert(logData, (errUpdate, body) => {
           if (errUpdate) throw errUpdate;

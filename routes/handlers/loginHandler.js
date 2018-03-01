@@ -1,9 +1,8 @@
 import md5 from 'md5'
 import cloudant from '../../config/db.js'
+import configEnv from '../../config/env_status.js';
 
-// let client = redis.createClient();
-
-var db = cloudant.db.use('michcom')
+let db = cloudant.db.use(configEnv.db)
 
 let uuid = 1 // Use seq instead of proper unique identifiers for demo only
 
