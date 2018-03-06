@@ -2,7 +2,14 @@
 
 {{#extend "css"}}
 <style>
-	
+	.select2-selection--single {
+        min-height: 36.5px !important;
+    }
+
+    .packages-header {
+        padding: 1px !important; 
+        text-align: center;
+    }
 </style>
 {{/extend}}
 
@@ -22,11 +29,11 @@
                     <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                 </button>
                 <br>
-                <button class="btn btn-warning btn-block" id="modButton" disabled>
+                <button class="btn btn-warning btn-block" id="clientModButton" disabled>
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Modificar
                 </button>
                 <br>	
-                <button class="btn btn-danger btn-block" id="delButton" disabled>
+                <button class="btn btn-danger btn-block" id="clientDelButton" disabled>
                     <i class="fa fa-times" aria-hidden="true"></i> Eliminar
                 </button>
                 <br>		
@@ -40,7 +47,8 @@
                                 <th>Cliente</th>
                                 <th>Paquete</th>
                                 <th>Monto</th>
-                                <th>Fecha de creación</th>
+                                <th>Fecha de inicio</th>
+                                <th>Frecuencia de pago</th>
                             </tr>
                         </tr>
                     </thead>		 
@@ -89,27 +97,37 @@
 
 <!-- Modal -->
 
-<div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="modal_title">
-  <div class="modal-dialog modal-md" role="document">
+<div class="modal fade" id="hostingsModal" role="dialog" aria-labelledby="modal_title">
+  <div class="modal-dialog modal-xs" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="modal_title"></h4>
-      </div>
-      <div class="modal-body" id="modal_body"></div>
-      <div class="modal-footer" id="modal_footer"></div>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal_title"></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
+        </div>
+        <div class="modal-body" id="modal_body"></div>
+        <div class="modal-footer" id="modal_footer">
+            <button id="savePackageToClient" disabled type="button" class="btn btn-primary">Agregar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </div>
     </div>
   </div>
 </div>
 
 {{#extend "js"}}
 <script>
-let clientsTable;
-let packagesTable;
+let clientsTable; // obtejo de tabla clientes
+let packagesTable; // objeto de tabla paquetes 
+let clientsData = [];
+let withoutClients = []; // clientes sin paquete de hosting asignado
+let packages = []; // todos los datos de los paquetes creados
+let packageSelected; // paquete seleccionado en formulario de asignación de paquete a un cliente
+let withoutClientSelected = ''; // rut del cliente seleccionado en formulario para asignar paquete a cliente
+let withoutClientSelectedName = ''; // nombre del cliente seleccionado en formulario para asignar paquete a cliente
+let selectedClientRow;
+let selectedClientData;
 
 $(document).ready(()=>{
     chargeClientsTable();
-
 })
 
 const chargeClientsTable = () => {
@@ -117,66 +135,356 @@ const chargeClientsTable = () => {
     .DataTable( {
         'iDisplayLength': 100,
         'oLanguage': {
-            'sSearch': ''
+            'sSearch': '',
+            'sEmptyTable': ' '
         },
         'responsive': true,
         'columns' : [ 
             {'data' : 'clientName'}, 
             {'data' : 'package'},
             {'data' : 'amount'},
-            {'data' : 'creationDate'}
+            {'data' : 'creationDate'},
+            {'data' : 'freq'}
         ],
         createdRow: (row, data, dataIndex) => {
             console.log(data)
-           //$(row).attr('id', '');
+            $(row).attr('id', data.clientRut);
         },
         initComplete: function(settings, json) {
-             $.ajax({
+            ajax({
                 url: 'api/hosting/clients'
-            })
-            .done(function(data) {
+            }).then(data=>{
+                console.log(data)
+                
                 if (!data.error) {
                     $.each(data, function(index, val) {
+                        let freq = ''
+                        let date = moment(val.hosting.init_day).format('DD/MM/YYYY');
+
+                        if(val.hosting.freq == 'monthly') freq = 'mensual'
+                        if(val.hosting.freq == 'yearly') freq = 'anual'
+
                         clientsData.push({
-                            name: val.name,
-                            rut: $.formatRut(val._id)
+                            clientRut: val._id,
+                            clientName: val.name,
+                            package: val.hosting.package,
+                            amount: number_format(val.hosting.amount),
+                            creationDate: date,
+                            freq: freq
                         })
                     });
 
-                    datatable.rows.add(clientsData).draw();
+                    clientsTable.rows.add(clientsData).draw();
                     
                 } else {
                     toastr.warning(data.error)
                 }
                 $('#loadingClients').empty();
+                
             })
-            .fail(function() {
-                console.log("error al cargar clientes");
-                $('#loadingClients').empty();
-            });
           }
     });
 
 
-    $('#table tbody').on( 'click', 'tr', function () {
+    $('#clientsTable tbody').on( 'click', 'tr', function () {
         if ( $(this).hasClass('selected') ) {
+            console.log('deseleccionada')
             $(this).removeClass('selected');
-            $('#modButton').prop('disabled', true);
-            $('#desButton').prop('disabled', true);
+           
+            $('#clientModButton').prop('disabled', true);
+            $('#clientDelButton').prop('disabled', true);
+            
         } else {
-            datatable.$('tr.selected').removeClass('selected');
+            console.log('seleccionada')
+            clientsTable.$('tr.selected').removeClass('selected');
             $(this).addClass('selected');
-            selectedClientRow = datatable.row( $(this) );
-            selectedClientData = datatable.row( $(this) ).data();
-            var replace1 = selectedClientData.rut.split('.').join('');
-              var replace2 = replace1.replace('-', '');
-              selectedClientRut = replace2;
 
-            $('#modButton').prop('disabled', false);
-            $('#desButton').prop('disabled', false);
+            $('#clientModButton').prop('disabled', false);
+            $('#clientDelButton').prop('disabled', false);
+            selectedClientRow = clientsTable.row( $(this) );
+            selectedClientData = clientsTable.row( $(this) ).data();
+
+            console.log(selectedClientData)
+
+            /*
+            clientsTable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            selectedClientRow = clientsTable.row( $(this) );
+            selectedClientData = clientsTable.row( $(this) ).data();
+            var replace1 = selectedClientData.rut.split('.').join('');
+            var replace2 = replace1.replace('-', '');
+              selectedClientRut = replace2;
+            */
         }
     });
 }
+
+$('#createButton').on('click', function(){
+    let packagesSelect2 = []; // todos los paquetes creados para asignar a un cliente en select2
+    withoutClients = [];
+
+    $('#hostingsModal').modal();
+    $('#modal_title').html('Asignar un paquete de hosting a un cliente');
+
+    $('#modal_body').html(` 
+        <div class="card mb-3">
+            <div class="card-header">Seleccione <b>nombre del cliente</b></div>
+            <div class="card-body">
+                <select id="withoutClients"><option></option></select>
+            </div>  
+        </div>
+        
+        <div class="card">
+            <div class="card-body row">
+                <div class="col-md-6">
+                    <div class="card-header packages-header"><b>Paquete</b></div>
+                    <select disabled style="font-size:40px !important;" id="packages"><option></option></select>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-header packages-header"><b>Frecuencia de pago</b></div>
+                    <select disabled id="freq" class="form-control" >
+                        <option selected value="yearly">Anual</option>
+                        <option value="monthly">Mensual</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6" style="margin-top:5px;">
+                    <div class="card-header packages-header"><b>Fecha de inicio</b></div>
+                    <div class="input-group">
+                        <input disabled id="initDate" placeholder="Fecha de inicio (Día/Mes/Año)" class="form-control" type="text">
+                    </div>
+                </div>
+
+                <div class="col-md-6" style="margin-top:5px;">
+                    <div class="card-header packages-header"><b>Costo del paquete</b></div>
+                    <div class="input-group">
+                        <input disabled id="amount" placeholder="Costo del paquete" class="form-control" type="number" min="1">
+                    </div>
+                </div>
+
+            </div>  
+        </div>
+
+    `)
+
+    console.log(withoutClients)
+    ajax({
+        url: '/api/hosting/without',
+    }).then(data=>{
+        console.log(data)
+
+        data.forEach((el) => {
+            withoutClients.push({
+                text: el.name,
+                id: el._id
+            })    
+        });
+
+        $('#withoutClients').select2({
+            placeholder: "Seleccione un cliente",
+            data: withoutClients,
+            width: '100%'
+        })
+    })
+
+    ajax({
+        url: '/api/hosting/packages',
+    }).then(data=>{
+        console.log(data)
+
+        data.forEach((el, i) => {
+            packagesSelect2.push({
+                text: el.name,
+                id: i
+            })  
+            
+            packages[el.name] = el;
+        });
+
+        $('#packages').select2({
+            placeholder: "Seleccione un paquete",
+            data: packagesSelect2,
+            width: '100%'
+        })
+
+    })
+
+    $('#initDate').daterangepicker({
+        "locale": {
+            "format": "DD/MM/YYYY",
+            "daysOfWeek": [
+            "Dom",
+            "Lun",
+            "Mar",
+            "Mie",
+            "Jue",
+            "Vie",
+            "Sab"
+            ],
+            "monthNames": [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre"
+            ],
+            "firstDay": 1
+        },
+        drops: "up",
+        singleDatePicker: true,
+        showDropdowns: true
+    });
+
+});
+
+$('#clientModButton').on('click', function(){
+    console.log('mod')
+});
+
+$('#clientDelButton').on('click', function(){
+    swal({
+      title: '¿Estás seguro de eliminar el paquede de hosting <b>' + selectedClientData.package + '</b> del cliente <b>'+ selectedClientData.clientName +'</b>?',
+      text: '',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Eliminar!',
+      cancelButtonText: 'No, cancelar!',
+      confirmButtonClass: 'btn btn-danger',
+      cancelButtonClass: 'btn btn-primary',
+      buttonsStyling: false
+    }).then(function(action) {
+      if (action.value) {
+
+        //$('#loadingStatus').html('<center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center>');
+        ajax({
+          url: '/api/hosting/delete',
+          type: 'DELETE',
+          data: {
+            client: selectedClientData.clientRut
+          }
+        }).then((data) => {
+            if (data.ok) {
+                createLog({
+                    form: 'Hosting',
+                    desc: 'Se eliminó el paquete de hosting ' + selectedClientData.package + ' del cliente ' + $.formatRut(selectedClientData.clientRut) + ' (' + selectedClientData.clientName + ')',
+                    extra: selectedClientData.clientRut
+                });
+                toastr.success(data.ok);
+                selectedClientRow.remove().draw();
+                $('#clientModButton').prop('disabled', true);
+                $('#clientDelButton').prop('disabled', true);
+            }
+        });
+      }
+    });
+});
+
+$('#modal_body').on('select2:select', '#withoutClients', function(e) {
+    $('#packages').prop('disabled', false);
+    withoutClientSelected = e.params.data.id;
+    withoutClientSelectedName = e.params.data.text;
+});
+
+$('#modal_body').on('select2:select', '#packages', function(e) {
+    $('#freq').prop('disabled', false);
+    $('#initDate').prop('disabled', false);
+    $('#amount').prop('disabled', false);
+    $('#savePackageToClient').prop('disabled', false);
+
+    packageSelected = packages[e.params.data.text];
+    let freqSelected = $('#freq').val();
+    console.log(packages[e.params.data.text]);
+
+    if(freqSelected == 'yearly') {
+        $('#amount').val(packageSelected.year_price)
+    } else if (freqSelected == 'monthly') {
+        $('#amount').val(packageSelected.month_price)
+    }
+});
+
+$('#modal_body').on('change', '#freq', () =>{
+    let freqSelected = $('#freq').val();
+    if(freqSelected == 'yearly') {
+        $('#amount').val(packageSelected.year_price)
+    } else if (freqSelected == 'monthly') {
+        $('#amount').val(packageSelected.month_price)
+    }
+})
+
+$('#savePackageToClient').on('click', ()=>{
+    let client = withoutClientSelected; // rut del cliente seleccionado
+    let package = packageSelected.name;
+    let freq = $('#freq').val();
+    let init = $('#initDate').val();
+    let amount = parseInt($('#amount').val());
+    let dateArr = init.split('/')
+    let formatInit = `${dateArr[2]}-${dateArr[1]}-${dateArr[0]}`;
+
+    let saveData = {
+        client: withoutClientSelected,
+        package: packageSelected.name,
+        amount: amount,
+        init: formatInit,
+        freq: freq
+    }
+
+    swal({
+      title: '¿Estás seguro de asignar el paquete de hosting '+package+' al cliente '+ withoutClientSelectedName +'?',
+      text: '',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Agregar!',
+      cancelButtonText: 'No, cancelar!',
+      confirmButtonClass: 'btn btn-primary',
+      cancelButtonClass: 'btn btn-danger',
+      buttonsStyling: false
+    }).then(function(action) {
+      if (action.value) {
+        ajax({
+            url: '/api/hosting/add',
+            type: 'POST',
+            data: saveData
+        }).then(data=>{
+            if(data.ok) {
+                $('#hostingsModal').modal('toggle');
+                esFreq = ''
+
+                if(freq == 'monthly') esFreq = 'mensual'
+                if(freq == 'yearly') esFreq = 'anual'
+
+                clientsTable.row.add({
+                    clientRut: data.client.rut,
+                    clientName: data.client.name,
+                    package: package,
+                    amount: number_format(amount),
+                    creationDate: init,
+                    freq: esFreq
+                }).draw();        
+                toastr.success(data.ok)
+
+                createLog({
+                    form: 'Hosting',
+                    desc: 'Se asignó el paquete de hosting ' + package + ' al cliente ' + $.formatRut(data.client.rut) + ' (' + data.client.name + ')',
+                    extra: data.client.rut
+                });
+            }
+        })
+      }
+    });
+})
+
 
 NProgress.done(); /* TODO CARGADO! */
 </script>

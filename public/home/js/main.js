@@ -672,76 +672,98 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
         step++;
       } else {
         $('#modInvoiceDescription').css('border', '1px solid red');
+        toastr.warning('LA DESCRIPCIÓN DE LA FACTURA DEBE TENER UN MÍNIMO DE 5 CARACTERES DE LARGO.');
       }
     
       $('#modInvoiceType').css('border', '1px solid green');
       $('#modInvoiceBusiness').css('border', '1px solid green');
     
       if (step === 3) {
-        let sendModData = {
-          rut: selectedClient.rut,
-          id: statusDataRow.creationDate,
-          invoice: modInvoiceNumber,
-          originalInvoiceNumber: statusDataRow.invoice,
-          originalBusiness: statusDataRow.business,
-          business: modInvoiceBusiness,
-          amount: modInvoiceAmount,
-          invoice_type: modInvoiceType,
-          description: modInvoiceDescription,
-          date: '-',
-          iva: iva
-        };
+        $('#sendModInvoice').addClass('disabled');
 
-        console.log(JSON.stringify(sendModData));
+        swal({
+          title: '¿Estás seguro/a de modificar factura?',
+          text: '',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, modificar',
+          cancelButtonText: 'No, cancelar!',
+          confirmButtonClass: 'btn btn-secondary',
+          cancelButtonClass: 'btn btn-primary',
+          buttonsStyling: false
+        }).then(function(action) {
+          if (action.value) {
+            let sendModData = {
+              rut: selectedClient.rut,
+              id: statusDataRow.creationDate,
+              invoice: modInvoiceNumber,
+              originalInvoiceNumber: statusDataRow.invoice,
+              originalBusiness: statusDataRow.business,
+              business: modInvoiceBusiness,
+              amount: modInvoiceAmount,
+              invoice_type: modInvoiceType,
+              description: modInvoiceDescription,
+              date: '-',
+              iva: iva
+            };
+    
+            console.log(JSON.stringify(sendModData));
+            
+            ajax({ // enviar nueva factura 
+              url: 'api/modInvoice',
+              type: 'POST',
+              data: {fullData: JSON.stringify(sendModData)}
+            }).then(data => {
+              console.log(data);
+              
+              if (data.error) {
+                $('#modInvoiceNumber').css('border', '1px solid red');
+                $('#form_messages').html('<div class="alert alert-danger"><center>' + data.error + '</center></div>');
+                $('#form_messages').slideDown({
+                  opacity: "show"
+                }, "slow");
+                $('#sendModInvoice').removeClass('disabled');
+
+              } else if (data.ok) {
+                //$('#clientInfo').modal('dispose');
+                $('#form_messages').html('<div class="alert alert-success"><center>' + data.ok + '</center></div>');
+                $('#form_messages').slideDown({
+                  opacity: "show"
+                }, "slow");
+                //$('.nav-pills a[href="#info"]').tab('show'); // ir a pestaña de información del cliente
+                $('#infoContent').css('display', 'inline');
+                $('#invoiceStep').empty();
+                chargeModal({
+                  id: selectedClient.rut
+                }); // Recargar toda la información del cliente
+                toastr.success(`FACTURA <b>${modInvoiceNumber}</b> MODIFICADA CORRECTAMENTE PARA EL CLIENTE <b>${selectedClient.name}</b>`);
         
-        ajax({ // enviar nueva factura 
-          url: 'api/modInvoice',
-          type: 'POST',
-          data: {fullData: JSON.stringify(sendModData)}
-        }).then(data => {
-          console.log(data);
-          
-          if (data.error) {
-            $('#modInvoiceNumber').css('border', '1px solid red');
-            $('#form_messages').html('<div class="alert alert-danger"><center>' + data.error + '</center></div>');
-            $('#form_messages').slideDown({
-              opacity: "show"
-            }, "slow");
-            $('#sendModInvoice').prop('disabled', false);
-    
-          } else if (data.ok) {
-            //$('#clientInfo').modal('dispose');
-            $('#form_messages').html('<div class="alert alert-success"><center>' + data.ok + '</center></div>');
-            $('#form_messages').slideDown({
-              opacity: "show"
-            }, "slow");
-            //$('.nav-pills a[href="#info"]').tab('show'); // ir a pestaña de información del cliente
-            $('#infoContent').css('display', 'inline');
-            $('#invoiceStep').empty();
-            chargeModal({
-              id: selectedClient.rut
-            }); // Recargar toda la información del cliente
-            toastr.success(`FACTURA <b>${modInvoiceNumber}</b> MODIFICADA CORRECTAMENTE PARA EL CLIENTE <b>${selectedClient.name}</b>`);
-    
-            createLog({
-              form: 'Facturas',
-              desc: 'Se modificó la factura ' + modInvoiceNumber + '(original: '+statusDataRow.invoice+') al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
-              extra: modInvoiceNumber
+                createLog({
+                  form: 'Facturas',
+                  desc: 'Se modificó la factura ' + modInvoiceNumber + '(original: '+statusDataRow.invoice+') al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
+                  extra: modInvoiceNumber
+                });
+        
+                chargeChart(); // recargar grafico de pantalla principal
+                // REINICIAR FORMULARIO 
+                $('#modInvoiceNumber').val('');
+                $('#modInvoiceNumber').css('border', '1px solid #CCCCCC');
+                $('#modInvoiceAmount').val('');
+                $('#modInvoiceAmount').css('border', '1px solid #CCCCCC');
+                $('#modInvoiceType').css('border', '1px solid #CCCCCC');
+                $('#modInvoiceBusiness').css('border', '1px solid #CCCCCC');
+                $('#modInvoiceDescription').val('');
+                $('#modInvoiceDescription').css('border', '1px solid #CCCCCC');
+                $('#sendModInvoice').prop('disabled', false);
+                $('#form_messages').empty();
+        
+              }
             });
-    
-            chargeChart(); // recargar grafico de pantalla principal
-            // REINICIAR FORMULARIO 
-            $('#modInvoiceNumber').val('');
-            $('#modInvoiceNumber').css('border', '1px solid #CCCCCC');
-            $('#modInvoiceAmount').val('');
-            $('#modInvoiceAmount').css('border', '1px solid #CCCCCC');
-            $('#modInvoiceType').css('border', '1px solid #CCCCCC');
-            $('#modInvoiceBusiness').css('border', '1px solid #CCCCCC');
-            $('#modInvoiceDescription').val('');
-            $('#modInvoiceDescription').css('border', '1px solid #CCCCCC');
-            $('#sendModInvoice').prop('disabled', false);
-            $('#form_messages').empty();
-    
+          } else if (action.dismiss) {
+            toastr.info('LA FACTURA <b>'+modInvoiceNumber+'</b> NO SE HA MODIFICADO.');
+            $('#sendModInvoice').removeClass('disabled');
           }
         });
       }
@@ -760,9 +782,7 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
       cancelButtonText: 'No, cancelar!',
       confirmButtonClass: 'btn btn-danger',
       cancelButtonClass: 'btn btn-primary',
-      buttonsStyling: false,
-      animation: false,
-      customClass: 'animated tada'
+      buttonsStyling: false
     }).then(function(action) {
       if (action.value) {
         $('#modInvoice').addClass('disabled');
@@ -796,68 +816,94 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
 
 
   $('#invoiceStep').on('click', '#sendStatus', function() { // cambiar estado de factura
-    var invoicePaidDate = '';
-    var postData = {};
-    var reason = '';
-
-    $('#loadingStatus').html('<center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center>');
     $('#modInvoice').addClass('disabled');
     $('#delInvoice').addClass('disabled');
     $('#sendStatus').addClass('disabled');
-    /* FALTA VALIDAR LENGTH*/
-    if (statusDataRow.status === 'PAGADO') {
-      reason = $('#cancellation_reason').val();
 
-      if (reason === '') {
-        reason = 'Sin razón asignada';
-      }
+    swal({
+      title: '¿Estás seguro/a de cambiar el estado de la factura?',
+      text: '',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, cambiar estado!',
+      cancelButtonText: 'No, cancelar!',
+      confirmButtonClass: 'btn btn-secondary',
+      cancelButtonClass: 'btn btn-primary',
+      buttonsStyling: false
+    }).then(function(action) {
+      /* FALTA VALIDAR LENGTH*/
 
-      postData = {
-        invoice: invoiceNumberToChange,
-        reason: reason,
-        date: '-',
-        business: statusDataRow.business,
-        originalStatus: 'PAGADO'
-      };
-
-    } else if (statusDataRow.status === 'PENDIENTE') {
-      invoicePaidDate = $('input[name="invoiceDate"]').val();
-
-      postData = {
-        invoice: invoiceNumberToChange,
-        reason: '',
-        date: invoicePaidDate,
-        business: statusDataRow.business,
-        originalStatus: 'PENDIENTE'
-      };
-    }
-    //$('#infoContent').css('visibility', 'visible');
-    //$('#invoiceStep').empty();
-
-    ajax({url: 'api/changeInvoiceState', type:'POST', data: postData}).then(res=>{
-      chargeModal({
-        id: selectedClient.rut
-      }); // Recargar toda la información del cliente
-      chargeChart(); // recargar grafico de pantalla principal
-      $('#infoContent').css('display', 'inline');
-      $('#invoiceStep').empty();
-      if (res.status === 'PENDIENTE') {
-        toastr.success(`Estado de factura <b>${statusDataRow.invoice}</b> cambiada de <b>PAGADO</b> a <b>PENDIENTE</b> correctamente`);
-        createLog({
-          form: 'Facturas',
-          desc: 'Se cambió el estado de la factura ' + statusDataRow.invoice + ' del cliente ' + selectedClient.rut + ' (' + selectedClient.name + ') de PAGADO a PENDIENTE',
-          extra: statusDataRow.invoice
+    
+      if (action.value) {
+        var invoicePaidDate = '';
+        var postData = {};
+        var reason = '';
+  
+        $('#loadingStatus').html('<center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center>');
+        
+        if (statusDataRow.status === 'PAGADO') {
+          reason = $('#cancellation_reason').val();
+    
+          if (reason === '') {
+            reason = 'Sin razón asignada';
+          }
+    
+          postData = {
+            invoice: invoiceNumberToChange,
+            reason: reason,
+            date: '-',
+            business: statusDataRow.business,
+            originalStatus: 'PAGADO'
+          };
+    
+        } else if (statusDataRow.status === 'PENDIENTE') {
+          invoicePaidDate = $('input[name="invoiceDate"]').val();
+    
+          postData = {
+            invoice: invoiceNumberToChange,
+            reason: '',
+            date: invoicePaidDate,
+            business: statusDataRow.business,
+            originalStatus: 'PENDIENTE'
+          };
+        }
+        //$('#infoContent').css('visibility', 'visible');
+        //$('#invoiceStep').empty();
+    
+        ajax({url: 'api/changeInvoiceState', type:'POST', data: postData}).then(res=>{
+          chargeModal({
+            id: selectedClient.rut
+          }); // Recargar toda la información del cliente
+          chargeChart(); // recargar grafico de pantalla principal
+          $('#infoContent').css('display', 'inline');
+          $('#invoiceStep').empty();
+          if (res.status === 'PENDIENTE') {
+            toastr.success(`Estado de factura <b>${statusDataRow.invoice}</b> cambiada de <b>PAGADO</b> a <b>PENDIENTE</b> correctamente`);
+            createLog({
+              form: 'Facturas',
+              desc: 'Se cambió el estado de la factura ' + statusDataRow.invoice + ' del cliente ' + selectedClient.rut + ' (' + selectedClient.name + ') de PAGADO a PENDIENTE',
+              extra: statusDataRow.invoice
+            });
+          } else if (res.status === 'PAGADO') {
+            toastr.success(`Estado de factura <b>${statusDataRow.invoice}</b> cambiada de <b>PENDIENTE</b> a <b>PAGADO</b> correctamente`);
+            createLog({
+              form: 'Facturas',
+              desc: 'Se cambió el estado de la factura ' + statusDataRow.invoice + ' del cliente ' + selectedClient.rut + ' (' + selectedClient.name + ') de PENDIENTE a PAGADO',
+              extra: statusDataRow.invoice
+            });
+          }
         });
-      } else if (res.status === 'PAGADO') {
-        toastr.success(`Estado de factura <b>${statusDataRow.invoice}</b> cambiada de <b>PENDIENTE</b> a <b>PAGADO</b> correctamente`);
-        createLog({
-          form: 'Facturas',
-          desc: 'Se cambió el estado de la factura ' + statusDataRow.invoice + ' del cliente ' + selectedClient.rut + ' (' + selectedClient.name + ') de PENDIENTE a PAGADO',
-          extra: statusDataRow.invoice
-        });
+      } else if (action.dismiss) {
+        $('#modInvoice').removeClass('disabled');
+        $('#delInvoice').removeClass('disabled');
+        $('#sendStatus').removeClass('disabled');
       }
-    });
-  });
+    });    
+  }); // fin click
+
+
 }; // FIN FUNCION GRADE!!!!!!!!!!!!!!!!!!!!!!!!!
 
 const chargeModal = ({id}) => {

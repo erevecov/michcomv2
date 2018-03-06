@@ -48,7 +48,18 @@ const Public = {
       }
     }
   }
-}
+};
+
+const CheckSession = { // todos los clientes habilitados con hosting plan de hosting asignado
+  method: 'GET',
+  path: '/check',
+  options: {
+    handler: (request, h) => {
+      return true;
+    }
+  }
+};
+
 /*
 const default404 = {
   method: [ 'GET', 'POST' ],
@@ -87,6 +98,7 @@ const Routes = [].concat(
     Users,
     Logs,
     Hostings,
+    CheckSession,
     // default404,
     APIUsers,
     APIClients,

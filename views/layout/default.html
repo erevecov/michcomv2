@@ -160,7 +160,38 @@
 
     $(document).ready(function() {
       $('[data-toggle="tooltip"]').tooltip()
+      setInterval(() => {
+        checkSession()
+      }, 60000);
     });
+
+    const checkSession = () => {
+        $.ajax({
+		    url: '/check'
+        })
+        .done(function(data) {
+            if(data != true) reloadPage();
+        })
+        .fail(function() {
+            reloadPage();
+        });
+    }
+
+    const reloadPage = () => {
+        swal({
+            title: 'Su sesión a finalizado!',
+            text: 'Redirigiendo a página de inicio de sesión...',
+            type: 'warning',
+            showCancelButton: false,
+            showConfirmButton: false,
+            animation: true
+        });
+
+        setTimeout(() => {
+            //window.location.replace("/login");
+            location.reload();
+        }, 5000);
+    }
 
     const getTime = () => {
       return new Promise(resolve=>{

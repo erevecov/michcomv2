@@ -30,7 +30,7 @@ const Logs = [{ // ver todos
           }]
         }, (err, result) => {
           if (err) throw err
-          
+          console.log(configEnv.db_logs)
           if (result.docs[0]) {
             resolve(result.docs)
           } else {
