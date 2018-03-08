@@ -10,20 +10,21 @@ import hapiDevErrors from 'hapi-dev-errors'
 import dotenv from 'dotenv'
 import HapiSwagger from 'hapi-swagger'
 import Pack from './package'
+import checkHostings from './cronJobs/checkHostings' // CRON JOB
 
 dotenv.load()
 
 const server = Hapi.server({
   host: '0.0.0.0',
   port: 3003
-})
+});
 
 const swaggerOptions = {
   info: {
     title: 'Test API Documentation',
     version: Pack.version
   }
-}
+};
 
 const start = async () => {
   await server.register([

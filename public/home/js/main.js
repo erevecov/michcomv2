@@ -996,9 +996,8 @@ const chargeClientsTable = (clientsData) => {
   clientsTable = $('#clientsTable')
     .DataTable({
       "iDisplayLength": 100,
-      
+      "responsive": true,
       "dom": 'Bfrtip',
-      
       "buttons": [/*{
           extend: 'pdfHtml5',
           customize: function(doc) {
