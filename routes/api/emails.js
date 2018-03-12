@@ -52,6 +52,7 @@ const emails = [
             uso mi correo para testing. En producción: mailOptions.to = to
         */
 
+        mailOptions.to = to;
         mailOptions.to.push('contabilidad@michcom.cl');
         console.log(mailOptions.to);
         mailOptions.html = html;

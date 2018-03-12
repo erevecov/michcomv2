@@ -1,5 +1,5 @@
 import cloudant from '../config/db.js';
-import crontab from 'node-crontab'
+import cron from 'node-cron';
 import moment from 'moment-timezone';
 import configEnv from '../config/env_status.js';
 
@@ -29,19 +29,27 @@ const main = async () => {
 }
 
 const test = async () => {
-    let time = moment.tz('America/Santiago').format('YYYY-MM-DDTHH:mm:ss')
+    let time = moment.tz('America/Santiago').format('DD')
 
     console.log(time)
+    
 }
 
 
-//let dailyCron = crontab.scheduleJob("0 */1 * *", function(){ // cada día a las 12 AM
-//    main();
-//});
+/*
+field	value
+second	0-59
+minute	0-59
+hour	0-23
+day of month	1-31
+month	1-12 (or names)
+day of week	0-7 (or names, 0 or 7 are sunday)
+*/
 
-let dailyCron = crontab.scheduleJob("*/5 * * * * *", function(){ // cada 5 segundos
-    test();
+let dailyCron = cron.schedule('0 0 9 * * *', function(){ // una vez al día a las 9 AM
+    test()
 });
+
 
 
 export default dailyCron

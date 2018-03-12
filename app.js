@@ -19,13 +19,6 @@ const server = Hapi.server({
   port: 3003
 });
 
-const swaggerOptions = {
-  info: {
-    title: 'Test API Documentation',
-    version: Pack.version
-  }
-};
-
 const start = async () => {
   await server.register([
     {

@@ -1,6 +1,6 @@
 require('dotenv').load();
 
-const env_status = 'prod'; // THIS ONE dev or prod // 
+const env_status = 'dev'; // THIS ONE dev or prod // 
 let dbs = {};
 
 if (env_status == 'dev') {
