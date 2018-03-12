@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 require('dotenv').load()
 
 var config = {
-    from: process.env.EMAIL_USER,
+    from: 'Contabilidad Michcom Ltda.',
     to: ['eduardorevecovillalobos@gmail.com'],
     subject: 'Facturas pendientes'
 };
