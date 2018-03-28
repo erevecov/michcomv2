@@ -71,6 +71,9 @@ const Logs = [{ // ver todos
       let description = request.payload.description;
       let form = request.payload.form;
       let extra = request.payload.extra; // puede ser cualquier string (para los formularios de factura el dato extra es el numero de la factura)
+      let type = request.payload.type;
+      let img;
+      if(type == 'createInvoice') img = true;
 
       return new Promise(resolve => {
         let logData = {
@@ -80,7 +83,7 @@ const Logs = [{ // ver todos
           role: credentials.role,
           form: form,
           description: description,
-          img: true
+          img: img
         };
 
         if(extra) logData.extra = extra;
@@ -96,7 +99,8 @@ const Logs = [{ // ver todos
       payload: Joi.object().keys({
         description: Joi.string(),
         form: Joi.string(),
-        extra: Joi.string().allow('')
+        extra: Joi.string().allow(''),
+        type: Joi.string().allow('')
       })
     }
   }

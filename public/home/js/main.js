@@ -76,8 +76,8 @@ const chargeAnnulledInvoicesForm = () => {
 const chargeNewInvoiceForm = () => {
   $('#new').html(`
     <div class="card bg-light mb-3" >
-        <div class="card-header text-center">
-            <h2>INGRESAR NUEVA FACTURA AL SISTEMA<h2>
+        <div class="card-header text-center" id="newInvoiceCardTitle">
+            <h3>INGRESAR NUEVA FACTURA AL CLIENTE <b>${selectedClient.name}</b><h3>
         </div>
         <div class="card-body row">
             <div class="col-md-4">
@@ -1415,7 +1415,7 @@ $('#new').on('click', '#sendNewInvoice', function() { // EVENTO CREAR NUEVA FACT
       } else if (data.ok) {
         toastr.success(`FACTURA <b>${newInvoiceNumber}</b> CREADA CORRECTAMENTE PARA EL CLIENTE <b>${selectedClient.name}</b>`);
 
-        html2canvas(document.querySelector("#clientInfo")).then(function(canvas) {
+        html2canvas(document.querySelector("#modal_body")).then(function(canvas) {
           /*
           // After you are done styling it, append it to the BODY element
           document.body.appendChild(imageFoo);
@@ -1437,9 +1437,10 @@ $('#new').on('click', '#sendNewInvoice', function() { // EVENTO CREAR NUEVA FACT
           createLog({
             form: 'Facturas',
             desc: 'Se agregó la factura ' + newInvoiceNumber + ' al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
-            extra: newInvoiceNumber
+            extra: newInvoiceNumber,
+            type: 'createInvoice'
           }).then(data=>{
-            console.log(data);
+            //console.log(data);
             let canvasToImg = canvas.toDataURL('image/jpeg');
             let formatId1 = data.id.replace(/:/g, 'Q');
             //let formatId2 = formatId1.replace('.', '');
@@ -1447,10 +1448,7 @@ $('#new').on('click', '#sendNewInvoice', function() { // EVENTO CREAR NUEVA FACT
             $.ajax({
               url: "/api/tools/uploadImg", // Url to which the request is send
               type: "POST",             // Type of request to be send, called as method
-              data: {id: formatId1, img:canvasToImg}, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-              success: function(data) {  // A function to be called if request succeeds
-                console.log(data);
-              }
+              data: {id: formatId1, img:canvasToImg}
             });
           });
           chargeChart(); // recargar grafico de pantalla principal
