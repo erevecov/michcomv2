@@ -23,16 +23,27 @@ const Logs = [{ // ver todos
             'userEmail',
             'role',
             'form',
-            'description'
+            'description',
+            'img'
           ],
           'sort': [{
             '_id': 'desc'
           }]
         }, (err, result) => {
           if (err) throw err
-          console.log(configEnv.db_logs)
+          //console.log(configEnv.db_logs)
           if (result.docs[0]) {
-            resolve(result.docs)
+            let filterLogs = result.docs.map(function(log) {
+              if(log.img) {
+                log.img = log._id.replace(/:/g, 'Q');
+                return log; 
+              }else {
+                log.img = '';
+                return log;
+              }
+            });
+
+            resolve(filterLogs);
           } else {
             resolve({
               error: 'NO EXISTEN LOGS EN EL SISTEMA'
@@ -68,7 +79,8 @@ const Logs = [{ // ver todos
           userName: credentials.name + ' ' + credentials.lastname,
           role: credentials.role,
           form: form,
-          description: description
+          description: description,
+          img: true
         };
 
         if(extra) logData.extra = extra;

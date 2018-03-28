@@ -7,6 +7,7 @@
     	text-transform: uppercase;
 	}
 
+	
 </style>
 
 {{/extend}}
@@ -30,7 +31,7 @@
 		</div>
 		
 		<div style="margin-top: 10px;" class="col-md-12 box-shadows table-responsive">
-			<table id="table" class="display nowrap table table-condensed" cellspacing="0" width="100%">
+			<table id="table" class="display table table-condensed" cellspacing="0" width="100%">
 			  <thead>
 			      <tr>
 		          <th>Fecha:</th>
@@ -38,7 +39,8 @@
 		          <th>Email de usuario:</th>
 		          <th>Rol</th>
 		          <th>Formulario</th>
-		          <th>Descripción</th>
+				  <th>Descripción</th>
+				  <th>Imagen</th>
 			      </tr>
 			  </thead>		 
             </table>
@@ -81,7 +83,7 @@
 
     	$( '.searchOptions' ).checkboxradio();
 		
-    	reloadAllLogs();
+    	//reloadAllLogs();
 
     	$('#reloadLogs').on('click', function() {
     		reloadAllLogs()
@@ -102,7 +104,8 @@
 						email: val.userEmail,
 						role: val.role,
 						form: val.form,
-						description: val.description
+						description: val.description,
+						img: val.img
 					})
 					
 				});
@@ -263,10 +266,13 @@
 					{"data" : "email"},
 					{"data" : "role"}, 
 					{"data" : "form"}, 
-					{"data" : "description"} 
+					{"data" : "description"},
+					{"data" : "img"}
 				],
 				createdRow: function( row, data, dataIndex){
-					//$(row).addClass('parent');
+					if(data.img != '') {
+						$('td', row).eq(6).html(`<a onclick="showImg('/img_logs/${data.img}')" class="btn btn-secondary" style="color:white;">view</a>`);
+					}
 	      		},
 				initComplete: function(settings, json) {
 					 reloadAllLogs()
@@ -278,6 +284,16 @@
 
         NProgress.done(); /* TODO CARGADO! */
 	})
+
+	function showImg(url) {
+		console.log(url);
+		swal({
+    		title: '',
+			html: `<img style="max-width:100%; max-height:600px;" src="${url}.jpeg">`,
+			width: '80%',
+			height: '600px'
+		})
+	}
 
 	
 </script>

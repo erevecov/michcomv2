@@ -50,6 +50,20 @@ const Public = {
   }
 };
 
+const imgLogs = {
+  method: 'GET',
+  path: '/img_logs/{path*}',
+  options: {
+    handler: {
+      directory: {
+        path: './img_logs',
+        listing: false,
+        index: false
+      }
+    }
+  }
+};
+
 const CheckSession = { // todos los clientes habilitados con hosting plan de hosting asignado
   method: 'GET',
   path: '/check',
@@ -91,6 +105,7 @@ const Home = {
 
 const Routes = [].concat(
     Public,
+    imgLogs,
     Login,
     Logout,
     Home,

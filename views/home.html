@@ -164,8 +164,8 @@
                 </div>
             </div>
             <br>
-            <div>
-                <table id="clientsTable" class="display nowrap table" cellspacing="0" width="100%">
+            <div class="table-responsive">
+                <table id="clientsTable" class="display table table-condensed" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>EMPRESA</th>
@@ -250,6 +250,9 @@
                         <a id="newInvoiceTabButton" class="nav-link" href="#new" aria-controls="new" role="pill" data-toggle="pill">Nueva factura</a>
                     </li>
                     <li class="nav-item">
+                        <a id="annulledInvoiceTabButton" class="nav-link" href="#annulled" aria-controls="annulled" role="pill" data-toggle="pill">Facturas anuladas</a>
+                    </li>
+                    <li class="nav-item">
                         <a id="generateReportTabButton" class="nav-link" href="#generate_report" aria-controls="generate_report" role="pill" data-toggle="pill">Generar informe</a>
                     </li>
                 </ul>
@@ -268,6 +271,8 @@
                     </div>
 
                     <div role="tabpanel" class="tab-pane" id="new"></div>
+
+                    <div role="tabpanel" class="tab-pane" id="annulled"></div>
 
                     <div role="tabpanel" class="tab-pane row" id="generate_report">
                         
@@ -289,7 +294,7 @@
                             <h4 id="report_business_name"></h4>
                             <h4 id="report_business_rut"></h4>
                             <h4 id="report_business_address"></h4>
-                            <br><br>
+                            
                             <p>Estimado cliente:</p>
                             <p>
                             Según lo observado en nuestra gestión de cobros, se encuentran pendientes de pago las facturas según detalle.
@@ -298,7 +303,7 @@
 
                             <table class="table table-hover table-striped" border="1" style="border-collapse: collapse">
                                 <thead>
-                                    <tr>
+                                    <tr style="background:#0074C5;">
                                         <th scope="col">N° Factura</th>
                                         <th scope="col">Descripción</th>
                                         <th scope="col">Razón social</th>
@@ -311,20 +316,16 @@
                             
                             
                             <div style"left:30px;">
-                                <h1>Michcom Ltda: <span id="michcomReportTotalOwed"></span></h1>
+                                <h3>Michcom Ltda: <span id="michcomReportTotalOwed"></span></h3>
                             </div>
-                            <br>
                             <div style="left:30px;">
-                                <h1>Tronit Ltda: <span id="tronitReportTotalOwed"></span></h1>
+                                <h3>Tronit Ltda: <span id="tronitReportTotalOwed"></span></h3>
                             </div>
                             
-
-                            <br>
-
                             <p>
                             Recordamos que pueden hacer su pago a través de depósito y/o transferencia bancaria a la siguiente cuenta corriente como corresponda.	
                             </p>
-                            <br>
+                            
                             <p>Nombre: <b>Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L. (Tronit Ltda)</b>	</p>
                             <p>Banco: <b>Itaú</b></p>
                             <p>Rut: <b>76.623.477-1</b></p>
@@ -334,12 +335,12 @@
                             <p>Banco: <b>Itaú</b></p>
                             <p>Rut: <b>76.235.643-0</b></p>
                             <p>N° Cuenta: <b>02 06 71 15 32</b></p>
-                            <br><br>
+                            <br>
 
-                            <div id="reportTable">
-                                
-                            </div>
-                            <br><br>
+                            <!--
+                            <div id="reportTable"></div>
+                            -->
+                            <br>
 
                             <p>Atentamente.</p>
                             <p>Departamento de Gestión y Cobros.-</p>

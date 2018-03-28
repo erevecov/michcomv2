@@ -30,7 +30,7 @@ const formatClients = () => {
         client.rut = $.formatRut(client._id);
         client.owedStatus = owedStatus;
         client.invoiceOwed = client.invoiceOwed.reduce((final, actual) => final += actual + ' - ', '').slice(0, -3);
-        client.amountOwed = `$ ${number_format(client.amountOwed)}`;
+        client.amountOwed = `${number_format(client.amountOwed)}`;
 
         delete client.status;
         delete client._id;
@@ -44,6 +44,33 @@ const formatClients = () => {
       resolve(clients);
     });
   });
+};
+
+const chargeAnnulledInvoicesForm = () => {
+  
+  $('#annulled').empty();
+  $('#annulled').html(`
+  <div class="card bg-light mb-3">
+    <div class="card-header text-center"><h2>FACTURAS ANULADAS</h2></div>
+    <div class="card-body">
+      <table id="annulledTable" style="width:100%;" class="display nowrap table table-condensed" cellspacing="0">
+        <thead>
+            <tr>
+              <th>N° Factura:</th>
+              <th>Fecha de pago:</th>
+              <th>Monto:</th>
+              <th>Descripción:</th>
+              <th>Empresa:</th>
+              <th>Estado:</th>
+              <th>Iva:</th>
+              <th>Fecha creación</th>
+              <th>razón</th>
+            </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+  `);
 };
 
 const chargeNewInvoiceForm = () => {
@@ -924,8 +951,9 @@ const chargeModal = ({id}) => {
     var client = data;
 
     selectedClient = client;
-    $('#newInvoiceTabButton').removeClass('disabled'); // activar botón para cargar información con datos de cliente actualizado
-    $('#generateReportTabButton').removeClass('disabled'); // activar botón para cargar información con datos de cliente actualizado
+    $('#newInvoiceTabButton').removeClass('disabled'); // activar botón para cargar pestaña de creación de nueva factura
+    $('#annulledInvoiceTabButton').removeClass('disabled'); // activar botón para cargar facturas anuladas
+    $('#generateReportTabButton').removeClass('disabled'); // activar botón para cargar generador de informes
     var owedStatus = '';
     if (client.amountOwed === 0) {
       owedStatus = 'SIN DEUDAS';
@@ -1074,6 +1102,7 @@ const chargeClientsTable = (clientsData) => {
     $('#invoiceStep').empty();
     $('.nav-tabs a[href="#info"]').tab('show');
     $('#newInvoiceTabButton').addClass('disabled'); // desactivar botón para evitar cargar información antes de actualizar datos del cliente
+    $('#annulledInvoiceTabButton').addClass('disabled'); // desactivar botón para evitar cargar información antes de actualizar datos del cliente
     $('#generateReportTabButton').addClass('disabled'); // desactivar botón para evitar cargar información antes de actualizar datos del cliente
     selectedClientRow = clientsTable.row($(this));
     // Limpiar de puntos y guion para busqueda de cliente en base de datos (id = rut)
@@ -1226,8 +1255,13 @@ $(document).ready(() => {
 });
 
 // EVENTOS
+
 $("a[href='#new']").on('show.bs.tab', function(e) {
   chargeNewInvoiceForm();
+});
+
+$("a[href='#annulled']").on('show.bs.tab', function(e) {
+  chargeAnnulledInvoicesForm();
 });
 
 $("a[href='#generate_report']").on('show.bs.tab', function(e) {
@@ -1379,34 +1413,60 @@ $('#new').on('click', '#sendNewInvoice', function() { // EVENTO CREAR NUEVA FACT
         $('#sendNewInvoice').prop('disabled', false);
 
       } else if (data.ok) {
-        $('#form_messages').html('<div class="alert alert-success"><center>' + data.ok + '</center></div>');
-        $('#form_messages').slideDown({
-          opacity: "show"
-        }, "slow");
-        $('.nav-pills a[href="#info"]').tab('show'); // ir a pestaña de información del cliente
-        chargeModal({
-          id: selectedClient.rut
-        }); // Recargar toda la información del cliente
         toastr.success(`FACTURA <b>${newInvoiceNumber}</b> CREADA CORRECTAMENTE PARA EL CLIENTE <b>${selectedClient.name}</b>`);
 
-        createLog({
-          form: 'Facturas',
-          desc: 'Se agregó la factura ' + newInvoiceNumber + ' al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
-          extra: newInvoiceNumber
-        });
+        html2canvas(document.querySelector("#clientInfo")).then(function(canvas) {
+          /*
+          // After you are done styling it, append it to the BODY element
+          document.body.appendChild(imageFoo);
 
-        chargeChart(); // recargar grafico de pantalla principal
-        /* REINICIAR FORMULARIO */
-        $('#newInvoiceNumber').val('');
-        $('#newInvoiceNumber').css('border', '1px solid #CCCCCC');
-        $('#newInvoiceAmount').val('');
-        $('#newInvoiceAmount').css('border', '1px solid #CCCCCC');
-        $('#newInvoiceType').css('border', '1px solid #CCCCCC');
-        $('#newInvoiceBusiness').css('border', '1px solid #CCCCCC');
-        $('#newInvoiceDescription').val('');
-        $('#newInvoiceDescription').css('border', '1px solid #CCCCCC');
-        $('#sendNewInvoice').prop('disabled', false);
-        $('#form_messages').empty();
+          console.log(canvasToImg)
+          $('body').append('<img src="'+canvasToImg+'"/>')
+          */
+          
+          $('#form_messages').html('<div class="alert alert-success"><center>' + data.ok + '</center></div>');
+          $('#form_messages').slideDown({
+            opacity: "show"
+          }, "slow");
+          $('.nav-pills a[href="#info"]').tab('show'); // ir a pestaña de información del cliente
+          chargeModal({
+            id: selectedClient.rut
+          }); // Recargar toda la información del cliente
+          
+
+          createLog({
+            form: 'Facturas',
+            desc: 'Se agregó la factura ' + newInvoiceNumber + ' al cliente ' + selectedClient.rut + ' (' + selectedClient.name + ')',
+            extra: newInvoiceNumber
+          }).then(data=>{
+            console.log(data);
+            let canvasToImg = canvas.toDataURL('image/jpeg');
+            let formatId1 = data.id.replace(/:/g, 'Q');
+            //let formatId2 = formatId1.replace('.', '');
+
+            $.ajax({
+              url: "/api/tools/uploadImg", // Url to which the request is send
+              type: "POST",             // Type of request to be send, called as method
+              data: {id: formatId1, img:canvasToImg}, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+              success: function(data) {  // A function to be called if request succeeds
+                console.log(data);
+              }
+            });
+          });
+          chargeChart(); // recargar grafico de pantalla principal
+          /* REINICIAR FORMULARIO */
+          $('#newInvoiceNumber').val('');
+          $('#newInvoiceNumber').css('border', '1px solid #CCCCCC');
+          $('#newInvoiceAmount').val('');
+          $('#newInvoiceAmount').css('border', '1px solid #CCCCCC');
+          $('#newInvoiceType').css('border', '1px solid #CCCCCC');
+          $('#newInvoiceBusiness').css('border', '1px solid #CCCCCC');
+          $('#newInvoiceDescription').val('');
+          $('#newInvoiceDescription').css('border', '1px solid #CCCCCC');
+          $('#sendNewInvoice').prop('disabled', false);
+          $('#form_messages').empty();
+          //document.body.appendChild(canvas);
+        });
 
       }
     });
