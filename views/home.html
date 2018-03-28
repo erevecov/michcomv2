@@ -289,64 +289,76 @@
                         </div>
 
                         <div class="box-shadows col-md-12" id="reportDiv">
-                            <h3 style="float:right">CURICO, <span id="report_date"></span></h3>
-                            <br><br>
-                            <h4 id="report_business_name"></h4>
-                            <h4 id="report_business_rut"></h4>
-                            <h4 id="report_business_address"></h4>
-                            
-                            <p>Estimado cliente:</p>
-                            <p>
-                            Según lo observado en nuestra gestión de cobros, se encuentran pendientes de pago las facturas según detalle.
-                            <span style="background:yellow;">Las que agradecemos cancelar o indicar comprobantes de pago al correo <b>contabilidad@michcom.cl</b> en caso de haber sido canceladas a la fecha.</span>
-                            </p>
 
-                            <table class="table table-hover table-striped" border="1" style="border-collapse: collapse">
-                                <thead>
-                                    <tr style="background:#0074C5;">
-                                        <th scope="col">N° Factura</th>
-                                        <th scope="col">Descripción</th>
-                                        <th scope="col">Razón social</th>
-                                        <th scope="col">Monto</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="report_table_invoices">
-                                </tbody>
-                            </table> 
+                            <div style="font-family: Arial, sans-serif;">
+                                <h3 style="float:right">CURICO, <span id="report_date"></span></h3>
                             
-                            
-                            <div style"left:30px;">
-                                <h3>Michcom Ltda: <span id="michcomReportTotalOwed"></span></h3>
+                                <h4 id="report_business_name"></h4>
+                                <h4 id="report_business_rut"></h4>
+                                <h4 id="report_business_address"></h4>
+                                
+                                <p>Estimado cliente:</p>
+                                <p>
+                                    Según lo observado en nuestra gestión de cobros, se encuentran pendientes de pago las facturas según detalle.
+                                </p>
+
+                                <center>  
+                                    <table class="table table-hover table-striped" border="1" style="border-collapse: collapse; width:100%;">
+                                        <thead>
+                                            <tr style="background:#dfe6e9;">
+                                                <th scope="col">N° Factura</th>
+                                                <th scope="col">Descripción</th>
+                                                <th scope="col">Razón social</th>
+                                                <th scope="col">Monto</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="report_table_invoices">
+                                        </tbody>
+                                    </table> 
+                                </center>
+                                
+                                
+                                <div style"left:30px;">
+                                    <h3>Michcom Ltda: <span id="michcomReportTotalOwed"></span></h3>
+                                </div>
+                                <div style="left:30px;">
+                                    <h3>Tronit Ltda: <span id="tronitReportTotalOwed"></span></h3>
+                                </div>
+                                
+                                <p style="background:#dfe6e9">
+                                    Les agradecemos cancelar o indicar comprobantes de pago al correo <b>contabilidad@michcom.cl</b> en caso de haber sido canceladas a la fecha.
+                                </p>
+
+                                <p>
+                                Recordamos que pueden hacer su pago a través de depósito y/o transferencia bancaria a la siguiente cuenta corriente como corresponda.	
+                                </p>
+                                <br>
+                                <!--<img style="width:300px;" src="http://michcom.cl/images/logomichcom.png">-->
+                                <p>Razón social: <b>Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L. (Tronit EIRL)</b>	</p>
+                                <p>Banco: <b>Itaú</b></p>
+                                <p>Rut: <b>76.623.477-1</b></p>
+                                <p>N° Cuenta: <b>02 07 13 28 23</b></p>
+                                <br>
+                                <p>Razón social: <b>Comercial Servicios y Asesorias M y G Limitada. (Michcom Ltda)</b>	</p>
+                                <p>Banco: <b>Itaú</b></p>
+                                <p>Rut: <b>76.235.643-0</b></p>
+                                <p>N° Cuenta: <b>02 06 71 15 32</b></p>
+                                <br>
+
+                                <!--
+                                <div id="reportTable"></div>
+                                -->
+                                <br>
+
+                                <p>Atentamente.</p>
+                                <p>Departamento de Gestión y Cobros.-</p>
+                                <p>Calle Merino Jarpa #20 Curicó - Chile</p>
+                                <br><br>
+                                <!--<center>	<h3>MICHCOM LTDA</h3> </center>-->
+                                <!--<img style="width:300px;" src="http://michcom.cl/images/microsoft.png">-->
                             </div>
-                            <div style="left:30px;">
-                                <h3>Tronit Ltda: <span id="tronitReportTotalOwed"></span></h3>
-                            </div>
-                            
-                            <p>
-                            Recordamos que pueden hacer su pago a través de depósito y/o transferencia bancaria a la siguiente cuenta corriente como corresponda.	
-                            </p>
-                            
-                            <p>Nombre: <b>Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L. (Tronit Ltda)</b>	</p>
-                            <p>Banco: <b>Itaú</b></p>
-                            <p>Rut: <b>76.623.477-1</b></p>
-                            <p>N° Cuenta: <b>02 07 13 28 23</b></p>
-                            <br>
-                            <p>Nombre: <b>Comercial Servicios y Asesorias M y G Limitada. (Michcom Ltda)</b>	</p>
-                            <p>Banco: <b>Itaú</b></p>
-                            <p>Rut: <b>76.235.643-0</b></p>
-                            <p>N° Cuenta: <b>02 06 71 15 32</b></p>
-                            <br>
-
-                            <!--
-                            <div id="reportTable"></div>
-                            -->
-                            <br>
-
-                            <p>Atentamente.</p>
-                            <p>Departamento de Gestión y Cobros.-</p>
-                            <br><br>
-                            <center>	<h3>MICHCOM LTDA</h3> </center>
                         </div>
+
                     </div>
                 </div>
             </div>

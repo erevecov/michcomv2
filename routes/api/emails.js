@@ -38,14 +38,35 @@ const emails = [
       handler: (request, h) => {
         let to = JSON.parse(request.payload.to);
         let html = request.payload.html;
-        /*
-        html+= '<img src="cid:firm"/>';
-        mailOptions.attachments = [{
-            filename: 'firmContabilidad.png',
-            path: '../../public/img/firmContabilidad.png',
-            cid: 'firm' //same cid value as in the html img src
-        }];
-        */
+
+        html+= `
+            <center>
+            <div>
+                <span>
+                    <img src="cid:logomichcom"/>
+                </span>
+            </div>
+            </center>
+        `;
+        mailOptions.attachments = [
+            {
+                filename: 'logomichcom.png',
+                path: 'http://michcom.cl/images/logomichcom.png',
+                cid: 'logomichcom' //same cid value as in the html img src
+            },
+            /*
+            {
+                filename: 'logotronit.jpg',
+                path: 'http://michcom.cl/images/logotronit.jpg',
+                cid: 'logotronit' //same cid value as in the html img src
+            },
+            {
+                filename: 'microsoft.png',
+                path: 'http://michcom.cl/images/microsoft.png',
+                cid: 'microsoft' //same cid value as in the html img src
+            },*/
+        ];
+        
         
 
         /*
@@ -53,7 +74,7 @@ const emails = [
         */
 
         mailOptions.to = to;
-        //mailOptions.to.push('contabilidad@michcom.cl');
+        mailOptions.to.push('contabilidad@michcom.cl');
         mailOptions.to.push('ereveco@michcom.cl');
         console.log(mailOptions.to);
         mailOptions.html = html;

@@ -271,7 +271,7 @@
 				],
 				createdRow: function( row, data, dataIndex){
 					if(data.img != '') {
-						$('td', row).eq(6).html(`<a onclick="showImg('/img_logs/${data.img}')" class="btn btn-secondary" style="color:white;">view</a>`);
+						$('td', row).eq(6).html(`<a onclick="showImg('/img_logs/${data.img}')" class="btn btn-secondary" style="color:white;"><i class="fa fa-eye" aria-hidden="true"></i></a>`);
 					}
 	      		},
 				initComplete: function(settings, json) {
