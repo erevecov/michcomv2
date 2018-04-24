@@ -13,6 +13,7 @@ import Clients from './clients';
 import Users from './users';
 import Logs from './logs';
 import Hostings from './hostings';
+//import machineEntry from './entry';
 
 import loginHandler from './handlers/loginHandler';
 import logoutHandler from './handlers/logoutHandler';
@@ -114,6 +115,7 @@ const Routes = [].concat(
     Logs,
     Hostings,
     CheckSession,
+    //machineEntry,
     // default404,
     APIUsers,
     APIClients,

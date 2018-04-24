@@ -289,23 +289,23 @@
                         </div>
 
                         <div class="box-shadows col-md-12" id="reportDiv">
-
                             <div style="font-family: Arial, sans-serif;">
-                                <h3 style="float:right">CURICO, <span id="report_date"></span></h3>
-                            
+            
+                                Estimados:
+                                <p>
+                                    Junto con saludar, queremos informarles que a través de nuestro sistema la empresa <b><span id="report_business_name"></span></b>
+                                    se encuentran pendientes las siguientes facturas.
+                                </p>
+
+                                <!--
                                 <h4 id="report_business_name"></h4>
                                 <h4 id="report_business_rut"></h4>
                                 <h4 id="report_business_address"></h4>
-                                
-                                <p>Estimado cliente:</p>
-                                <p>
-                                    Según lo observado en nuestra gestión de cobros, se encuentran pendientes de pago las facturas según detalle.
-                                </p>
-
+                                -->
                                 <center>  
-                                    <table class="table table-hover table-striped" border="1" style="border-collapse: collapse; width:100%;">
+                                    <table class="table" border="1">
                                         <thead>
-                                            <tr style="background:#dfe6e9;">
+                                            <tr>
                                                 <th scope="col">N° Factura</th>
                                                 <th scope="col">Descripción</th>
                                                 <th scope="col">Razón social</th>
@@ -354,6 +354,7 @@
                                 <p>Departamento de Gestión y Cobros.-</p>
                                 <p>Calle Merino Jarpa #20 Curicó - Chile</p>
                                 <br><br>
+                                <center><p style="float:right">Curicó, <span id="report_date"></span></p></center>
                                 <!--<center>	<h3>MICHCOM LTDA</h3> </center>-->
                                 <!--<img style="width:300px;" src="http://michcom.cl/images/microsoft.png">-->
                             </div>
@@ -375,6 +376,7 @@
  
 
 {{#extend "js"}}
+<script src="/public/home/js/firmContabilidad.js"></script>
 <script src="/public/home/js/main.js"></script>
 <script>
     let advancedSearchCheckboxNumber = 1;

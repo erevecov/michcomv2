@@ -89,8 +89,9 @@
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
+		<h4 class="modal-title" id="modal_title"></h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="modal_title"></h4>
+        
       </div>
       <div class="modal-body" id="modal_body"></div>
       <div class="modal-footer" id="modal_footer"></div>
@@ -233,75 +234,53 @@
 
 		$('#createButton').on('click', function(){
 			$('#clientModal').modal();
-			$('#modal_title').text('Agregar un nuevo cliente al sistema');
+			$('#modal_title').text('AGREGAR UN NUEVO CLIENTE AL SISTEMA');
 			$('#modal_body').html(`
-			<div class="box-shadows form-horizontal" style="padding:5px;"> 
+			<div style="padding:5px;"> 
 
-			<fieldset>
+				<div class="row">
 
-				<div class="form-group">
-				  <label class="col-md-4 control-label">Razón social</label>  
-				  <div class="col-md-4 inputGroupContainer">
-				  <div class="input-group">
-				  <span class="input-group-addon"><i class="fa fa-building" aria-hidden="true"></i></span>
-				  <input id="newClientName" placeholder="Nombre del cliente" class="form-control" type="text">
-				    </div>
-				  </div>
-				</div>
-
-
-				<div class="form-group">
-				  <label class="col-md-4 control-label" >Rut</label> 
-				    <div class="col-md-4 inputGroupContainer">
-				    <div class="input-group">
-				  <span class="input-group-addon"><i class="fa fa-asterisk" aria-hidden="true"></i></span>
-				  <input id="newClientRut" placeholder="Rut del cliente" class="form-control" type="text">
-				    </div>
-				  </div>
-				</div>
-
-
-				<div class="form-group">
-				  <label class="col-md-4 control-label" >Emails</label> 
-				    <div class="col-md-4 inputGroupContainer">
-				    <div class="input-group">
-				  <span class="input-group-addon" style="padding-bottom:3px !important; padding-top:3px !important; padding-left:4px !important; padding-right:4px !important;"><button id="addEmail"><i class="fa fa-plus fa-2x" aria-hidden="true"></i></button></span>
-				  <input id="newClientEmail" placeholder="Email del cliente" class="form-control" type="text">
-				    </div>
-				  </div>
-				</div>
-
-				
-				<div class="form-group">
-				    <div class="col-md-4 col-md-offset-4">
-						<ul id="email-list" class="list-group">
-						</ul>
+					<div class="col-md-12">
+						<label class="control-label"><i class="fa fa-building" aria-hidden="true"></i> Razón social</label>  
+						<input id="newClientName" placeholder="Nombre del cliente" class="form-control" type="text">
 					</div>
+						
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label" ><i class="fa fa-asterisk" aria-hidden="true"></i> Rut</label> 
+						<input id="newClientRut" placeholder="Rut del cliente" class="form-control" type="text">	
+					</div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label" ><i class="fa fa-envelope-o" aria-hidden="true"></i> Emails</label> 
+						
+						<div class="input-group">
+							<span class="input-group-addon" style="padding-bottom:3px !important; padding-top:3px !important; padding-left:4px !important; padding-right:4px !important;"><button id="addEmail"><i class="fa fa-plus fa-2x" aria-hidden="true"></i></button></span>
+							<input id="newClientEmail" placeholder="Email del cliente" class="form-control" type="text">
+						</div>
+					
+					</div>
+
+					
+					<div class="col-md-12">
+						<div class="col-md-12">
+							<ul id="email-list" class="list-group"></ul>
+						</div>
+					</div>
+									
+		
+					<div class="col-md-12" style="margin-top:20px;">
+						<label control-label"><i class="fa fa-map-marker" aria-hidden="true"></i> Dirección</label>
+						<textarea class="form-control" id="newClientAddress" placeholder="Dirección del cliente"></textarea>
+					</div>
+
+					<div style="display: none;" id="form_messages"></div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<button id="sendNewClient" class="btn btn-primary btn-block" >CREAR NUEVO CLIENTE <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+					</div>
+
+			
 				</div>
-								
-	 
-				<div class="form-group">
-				  <label class="col-md-4 control-label">Dirección</label>
-				  <div class="col-md-4 inputGroupContainer">
-			    	<div class="input-group">
-			        <span class="input-group-addon"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
-			        <textarea class="form-control" id="newClientAddress" placeholder="Dirección del cliente"></textarea>
-			  		</div>
-				  </div>
-				</div>
-
-				<div style="display: none;" id="form_messages"></div>
-
-				<!-- Button -->
-				<div class="form-group">
-				  <label class="col-md-4 control-label"></label>
-				  <div class="col-md-4">
-				    <button id="sendNewClient" class="btn btn-primary" >Crear <span class="glyphicon glyphicon-send"></span></button>
-				  </div>
-				</div>
-
-			</fieldset>
-
 		</div>
 			`)
 		});

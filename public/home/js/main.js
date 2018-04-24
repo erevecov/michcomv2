@@ -1552,89 +1552,132 @@ $('#modal_body').on('click', '#sendEmailBtn', () =>  { // enviar reporte por co
 });
 
 $('#modal_body').on('click', '#initpdf', () =>  { // exportar a pdf
+  getTime().then(res => {
+    var columns = ["N° FACTURA", "DESCRIPCIÓN", "RAZÓN SOCIAL", "MONTO"];
+    var doc = new jsPDF('p', 'pt');
 
-  var columns = ["N° Factura", "Descripción", "Razón social", "Monto"];
-  var doc = new jsPDF('p', 'pt');
+    /*
+    doc.setFontSize(12);
+    doc.setFontType('bold');
+    doc.text(10, 30, invoicesReport.report_businnes_name);
+    doc.text(550, 50, invoicesReport.date, null, null, 'right');
+    doc.text(10, 50, invoicesReport.report_businnes_rut);
+    doc.text(10, 70, invoicesReport.report_businnes_address);
+    */
+    doc.setDrawColor(0, 0, 0);
+    doc.setFontSize(11);
+    doc.addFont('CambriaMS', 'Cambria', 'normal');
+    doc.setFont('Cambria');
+    doc.setFontType('normal');
+    doc.text(50, 70, `Estimados`);
+    
+    doc.text(105, 70, invoicesReport.report_businnes_name)
+    doc.text(50, 90, `Junto con saludar y desear un buen día, queremos informarles que a través de nuestro sistema se encuentran\n pendientes las siguientes facturas, el monto asciende a un total de`);
+    doc.setFontType('bold');
+    doc.text(348, 103, `$${number_format(invoicesReport.michcom+invoicesReport.tronit)} CLP.`)
+    
+    doc.text(50, 120, '\nFavor regularizar a la brevedad para evitar futuros inconvenientes.');
+    doc.line(50, 135, 365, 135);
+  
+    doc.setFont('Cambria');
+    let formatRows = invoicesReport.rows.map(function(row) {
+      if(row[2] == 'Michcom Ltda') {
+        row[2] = 'MICHCOM LTDA.';
+        return row;
+      } else if (row[2] == 'Tronit Ltda') {
+        row[2] = 'TRONIT E.I.R.L.';
+        return row;
+      }
+    });
 
-  doc.setFontSize(12);
-  doc.setFontType('bold');
-  doc.text(10, 30, invoicesReport.report_businnes_name);
-  doc.text(550, 50, invoicesReport.date, null, null, 'right');
-  doc.text(10, 50, invoicesReport.report_businnes_rut);
-  doc.text(10, 70, invoicesReport.report_businnes_address);
+    doc.autoTable(columns, invoicesReport.rows, {
+      margin: {
+        top: 150,
+        left:50,
+        right:50
+      },
+      theme: 'plain',
+      styles: {
+        lineWidth: 1,
+        lineColor: 0,
+        font: 'Cambria'
+      }
+    });
 
-  doc.setFontSize(10);
-  doc.setFontType('normal');
-  doc.text(10, 110, 'Estimado cliente:');
-  doc.text(10, 130, `Según lo observado en nuestra gestión de cobros, se encuentra pendiente de pagos las facturas según detalle. Las que \n agradecemos cancelar e indicar comprobantes de pago en caso de haber sido canceladas a la fecha.`);
+    let finalY = doc.autoTable.previous.finalY + 30;
+    doc.setFont('Cambria');
+    doc.text(50, finalY, 'Si una de las facturas anteriormente señaladas ya se encuentra cancelada, favor enviar comprobante \nde pago.');
+    /*
+    doc.setFontSize(15);
+    doc.text(50, finalY, 'Michcom Ltda: ');
+    doc.text(170, finalY, `${number_format(invoicesReport.michcom)}`);
 
-  doc.autoTable(columns, invoicesReport.rows, {
-    margin: {
-      top: 150
-    }
+    doc.text(300, finalY, 'Tronit Ltda: ');
+    doc.text(400, finalY, `${number_format(invoicesReport.tronit)}`);
+    
+    doc.setFontSize(10);
+    */
+    
+    finalY += 10;
+
+    doc.setFontType('normal');
+    doc.setFont('Cambria');
+    doc.text(50, finalY + 30, 'Datos Cuenta Corriente');
+    doc.setDrawColor(0, 0, 0);
+    doc.line(50, finalY + 33, 155, finalY + 33);
+  
+    doc.text(50, finalY + 45, 'Razón social');
+    doc.text(120, finalY + 45, ': Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L.');
+
+    doc.text(50, finalY + 60, 'Banco ');
+    doc.text(120, finalY + 60, ': Itaú');
+
+    doc.text(50, finalY + 75, 'Rut ');
+    doc.text(120, finalY + 75, ': 76.623.477-1');
+
+    doc.text(50, finalY + 90, 'N° Cuenta ');
+    doc.text(120, finalY + 90, ': 02 07 13 28 23');
+
+    /* OTRA */
+    
+    doc.text(50, finalY + 120, 'Datos Cuenta Corriente');
+    doc.setDrawColor(0, 0, 0);
+    doc.line(50, finalY + 123, 155, finalY + 123);
+
+    doc.text(50, finalY + 135, 'Razón social ');
+    doc.text(120, finalY + 135, ': Comercial Servicios y Asesorias M y G Limitada.');
+
+    doc.text(50, finalY + 150, 'Banco');
+    doc.text(120, finalY + 150, ': Itaú');
+
+    doc.text(50, finalY + 165, 'Rut ');
+    doc.text(120, finalY + 165, ': 76.235.643-0');
+
+    doc.text(50, finalY + 180, 'N° Cuenta ');
+    doc.text(120, finalY + 180, ': 02 06 71 15 32');
+
+
+    doc.cellInitialize();
+    doc.setFillColor(189, 195, 199);
+    doc.setDrawColor(189, 195, 199);
+    doc.printingHeaderRow = true;
+    var cellConfigs = [50, finalY + 200, 465, 20, "Favor enviar comprobante de depósito o transferencia al correo electrónico", 0, ""];	// cellText is a string
+    doc.cell.apply(doc, cellConfigs);
+    
+    //doc.text(50, finalY + 200, 'Favor enviar comprobante de depósito o transferencia al correo electrónico');
+
+    doc.setFontType('bold');
+    doc.text(388, finalY + 212, 'contabilidad@michcom.cl');
+    doc.setDrawColor(0, 0, 0);
+    doc.line(388, finalY + 215, 511, finalY + 215);
+    doc.setFontType('normal');
+
+    doc.text(50, finalY + 240, 'Saludos cordiales.');
+
+    doc.addImage(firmContabilidad, 'JPEG', 50, finalY + 250, 300, 100);
+
+    doc.text(230, doc.internal.pageSize.height - 10, 'Curicó, '+moment(res).format('dddd DD [de] MMMM [de] YYYY'));
+
+    doc.save(`${invoicesReport.report_businnes_name} ${invoicesReport.date}.pdf`);
   });
-
-  let finalY = doc.autoTable.previous.finalY + 20;
-
-  doc.setFontType('bold');
-  doc.setFontSize(15);
-  doc.text(50, finalY, 'Michcom Ltda: ');
-  doc.text(170, finalY, `$ ${number_format(invoicesReport.michcom)}`);
-
-  doc.text(300, finalY, 'Tronit Ltda: ');
-  doc.text(400, finalY, `$ ${number_format(invoicesReport.tronit)}`);
-
-  doc.setFontSize(10);
-  finalY += 30;
-
-  doc.text(10, finalY, `Recordamos que pueden hacer su pago a través de depósito y/o transferencia bancaria a la siguiente cuenta corriente \n como corresponda.`);
-
-  doc.text(10, finalY + 40, 'Nombre: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 40, 'Asesorias y Servicios Tecnologicos Miguel Esteban Herrera Ureta E.I.R.L. (Tronit Ltda)');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 60, 'Banco: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 60, 'Itaú');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 80, 'Rut: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 80, '76.623.477-1');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 100, 'N° Cuenta: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 100, '02 07 13 28 23');
-
-  /* OTRA */
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 140, 'Nombre: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 140, 'Comercial Servicios y Asesorias M y G Limitada. (Michcom Ltda)');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 160, 'Banco: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 160, 'Itaú');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 180, 'Rut: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 180, '76.235.643-0');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 200, 'N° Cuenta: ');
-  doc.setFontType('bold');
-  doc.text(60, finalY + 200, '02 06 71 15 32');
-
-  doc.setFontType('normal');
-  doc.text(10, finalY + 240, 'Atentamente.');
-  doc.text(10, finalY + 250, 'Departamento de Gestión y Cobros.-');
-
-  doc.text(270, doc.internal.pageSize.height - 10, 'MICHCOM LTDA');
-
-  doc.save(`${invoicesReport.report_businnes_name} ${invoicesReport.date}.pdf`);
 });
