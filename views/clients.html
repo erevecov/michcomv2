@@ -285,7 +285,7 @@
 			`)
 		});
 
-		
+
 
 		$('#modButton').on('click', function() {
 			$('#clientModal').modal();
@@ -302,13 +302,20 @@
 				$('#modal_body').html(`
                 <div class="box-shadows form-horizontal" style="padding:5px;"> 
 
-                <fieldset>
+				<fieldset>
+				
+
+
+
+
+
+
 
                     <div class="form-group">
-                    <label class="col-md-4 control-label">Razón social</label>  
-                    <div class="col-md-4 inputGroupContainer">
+                    <label class="col-md-12 control-label"><i class="fa fa-building" aria-hidden="true"></i> Razón social</label>  
+                    <div class="col-md-12 inputGroupContainer">
                     <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-building" aria-hidden="true"></i></span>
+                    <span class="input-group-addon"></span>
                     <input value="${data.name}" id="modClientName" placeholder="Nombre del cliente" class="form-control" type="text">
                         </div>
                     </div>
@@ -316,10 +323,10 @@
 
 
                     <div class="form-group">
-                    <label class="col-md-4 control-label" >Rut</label> 
-                        <div class="col-md-4 inputGroupContainer">
+                    <label class="col-md-12 control-label" ><i class="fa fa-asterisk" aria-hidden="true"></i> Rut</label> 
+                        <div class="col-md-12 inputGroupContainer">
                         <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-asterisk" aria-hidden="true"></i></span>
+                    <span class="input-group-addon"></span>
                     <input value="${$.formatRut(data._id)}" id="modClientRut" placeholder="Rut del cliente" class="form-control" type="text" disabled>
                         </div>
                     </div>
@@ -327,8 +334,8 @@
 
 
                     <div class="form-group">
-                    <label class="col-md-4 control-label" >Emails</label> 
-                        <div class="col-md-4 inputGroupContainer">
+                    <label class="col-md-12 control-label" > Emails</label> 
+                        <div class="col-md-12 inputGroupContainer">
                         <div class="input-group">
                     <span class="input-group-addon" style="padding-bottom:3px !important; padding-top:3px !important; padding-left:4px !important; padding-right:4px !important;"><button id="addModEmail"><i class="fa fa-plus fa-2x" aria-hidden="true"></i></button></span>
                     <input id="modClientEmail" placeholder="Email del cliente" class="form-control" type="text">
@@ -338,7 +345,7 @@
 
                     
                     <div class="form-group">
-                        <div class="col-md-4 col-md-offset-4">
+                        <div class="col-md-12 col-md-offset-12">
                             <ul id="email-list" class="list-group">
                             </ul>
                         </div>
@@ -346,22 +353,23 @@
                                     
         
                     <div class="form-group">
-                    <label class="col-md-4 control-label">Dirección</label>
-                    <div class="col-md-4 inputGroupContainer">
+                    <label class="col-md-12 control-label"><i class="fa fa-map-marker" aria-hidden="true"></i> Dirección</label>
+                    <div class="col-md-12 inputGroupContainer">
                         <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
+                        <span class="input-group-addon"></span>
                         <textarea class="form-control" id="modClientAddress" placeholder="Dirección del cliente">${data.address}</textarea>
                         </div>
-                    </div>
+					</div>
+					
                     </div>
 
                     <div style="display: none;" id="form_messages"></div>
 
                     <!-- Button -->
                     <div class="form-group">
-                    <label class="col-md-4 control-label"></label>
-                    <div class="col-md-4">
-                        <button id="sendModClient" class="btn btn-primary" >Modificar <span class="glyphicon glyphicon-send"></span></button>
+                    <label class="col-md-12 control-label"></label>
+                    <div class="col-md-12">
+                        <button id="sendModClient" class="btn btn-primary " >Modificar <span class="glyphicon glyphicon-send"></span></button>
                     </div>
                     </div>
 
