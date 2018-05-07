@@ -1,0 +1,735 @@
+{{!< layout/default}}
+
+{{#extend "css"}} 
+<style>
+
+</style>
+
+{{/extend}}
+
+<!--Html principal-->
+
+<nav>
+    <div class="nav nav-pills mb-3 nav-justified" role="tablist">
+        <a class="nav-item nav-link active" id="enables-tab" data-toggle="tab" role="tab" aria-controls="enabled_tab" aria-selected="true"
+            href="#insertRepairs">Reparaciones</a>
+        <a class="nav-item nav-link" id="disables-tab" data-toggle="tab" role="tab" aria-controls="disabled_tab" aria-selected="false"
+            href="#editMaintainer">Mantenedores</a>
+    </div>
+</nav>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="insertRepairs" role="tabpanel" aria-labelledby="enables-tab">
+        <div class="row">
+            <div class="col-md-2 col-xs-12">
+                <br>
+                <button class="btn btn-primary btn-block" id="newRepair">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Agregar
+                </button>
+                <br>
+                <button class="btn btn-warning btn-block" id="modButton" disabled>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Modificar
+                </button>
+                <br>
+                <button class="btn btn-danger btn-block" id="desButton" disabled>
+                    <i class="fa fa-times" aria-hidden="true"></i> Deshabilitar
+                </button>
+                <br>
+            </div>
+
+            <div class="col-md-10 col-xs-12 box-shadows table-responsive">
+                <table id="table" class="display nowrap table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Equipo</th>
+                            <th>Fecha</th>
+                            <th>Razón de ingreso</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div id="loadingRepairs">
+                    <center>
+                        <i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+                        <span class="sr-only">Loading...</span>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="editMaintainer" role="tabpanel" aria-labelledby="disables-tab">
+        <div class="row">
+            <div class="col-md-2 col-xs-12 box-shadows">
+                <br>
+                <button class="btn btn-primary btn-block" id="newClientKeepButton">
+                    <i class="fa fa-user" aria-hidden="true"></i> Clientes
+                </button>
+                <br>
+                <button class="btn btn-warning btn-block" id="modButton">
+                    <i class="fa fa-laptop" aria-hidden="true"></i> Equipos
+                </button>
+                <br>
+                <button class="btn btn-danger btn-block" id="desButton">
+                    <i class="fa fa-bookmark" aria-hidden="true"></i> Marcas
+                </button>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="satModal" tabindex="-1" role="dialog" aria-labelledby="modal_title">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal_title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body" id="modal_body"></div>
+            <div class="modal-footer" id="modal_footer"></div>
+        </div>
+    </div>
+</div>
+
+
+
+{{#extend "js"}}
+<script>
+    let clientsData; // todos los datos de todos los clientes
+    let satEquipment; // todos los datos de equipos, marcs, modelos
+    let selects = { // arreglos para select2
+        technicals: [],
+        clients: [],
+        equipmentTypes: [],
+        brands: [],
+        models: []
+    }
+
+    jQuery(document).ready(function ($) {
+        chargeTable()
+        ajax({
+            url: 'api/clients'
+        }).then(res=>{
+            console.log(res)
+        })
+
+
+        NProgress.done(); /* TODO CARGADO! */
+    });
+
+//MANTENEDOR DE CLIENTES
+          
+$('#newClientKeepButton').on('click', function () {
+alert('hola');
+});
+
+//
+/*
+//DATATABLE INICIO
+  	function chargeTable() {
+            datatable = $('#table')
+                .DataTable({
+                    "iDisplayLength": 100,
+                    "oLanguage": {
+                        "sSearch": ""
+                    },
+                    "responsive": true,
+                    "columns": [
+                        { "data": "_id" },       
+                        { "data": "client" },
+                        { "data": "brand" },
+                        { "data": "model" },
+                        { "data": "fail" },
+                        { "data": "status" }
+                        
+                    ],
+                    initComplete: function (settings, json) {
+                        ajax({
+                            url:'api/satRepairs'
+                        }).then(res => {
+                            if (res.err){
+                                toastr.warning('No existen reparaciones')
+                            }else{
+                                let allRepairs = res.reduce ((arr, el, i)=>{
+                                    return arr.concat({
+                                        id:i,
+                                        text: el.brand + '' + el.model
+                                    })
+                                }, []) 
+
+                                 selects.technicals = res.reduce((arr, el, i) => {
+                                    return arr.concat({
+                                        id: i,
+                                        text: el.name + ' ' + el.lastname
+                                    })
+                                }, []) 
+                            }
+                        })
+                        $.ajax({
+
+                            url: 'api/sat'
+                        })
+                            .done(function (data) {
+                                if (!data.err) {
+                                    $.each(data, function (index, val) {
+                                        satData.push({
+                                            date: val._id,
+                                            client: val.client,
+                                            brand: val.brand,
+                                            model: val.model,
+                                            fail: val.fail
+                                        })
+                                    });
+
+                                    datatable.rows.add(satData).draw();
+                                } else {
+                                    toastr.warning('No existen reparaciones')
+                                }
+                                $('#loadingRepairs').empty();
+                            })
+                            .fail(function () {
+                                console.log("error al cargar clientes");
+                                $('#loadingRepairs').empty();
+                            });
+                    }
+                });
+
+
+            $('#table tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                    $('#modButton').prop('disabled', true);
+                    $('#desButton').prop('disabled', true);
+                } else {
+                    datatable.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    selectedClientRow = datatable.row($(this));
+                    selectedClientData = datatable.row($(this)).data();
+                    var replace1 = selectedClientData.rut.split('.').join('');
+                    var replace2 = replace1.replace('-', '');
+                    selectedClientRut = replace2;
+
+                    $('#modButton').prop('disabled', false);
+                    $('#desButton').prop('disabled', false);
+                }
+            });
+        }
+//DATATABLE FINAL
+*/
+
+    $('#satModal').on('shown.bs.modal', function () { // IMPORTANTE FOCUS MODAL SWAL
+        $(document).off('focusin.modal');
+    });
+
+    $('#newRepair').on('click', function(){
+       newRepair();     
+    });
+    /* Modal agregar cliente */
+    $('#modal_body').on('click', '#createClientFormButton', function(){
+        swal({
+            title: '',
+            html:`
+                <div style="padding:5px;"> 
+                    <h4>INGRESE UN NUEVO CLIENTE</h4>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-user" aria-hidden="true"></i> Nombre</label>
+                            <input id="clientNameForm" type="text"  required class="form-control border-input" placeholder="Nombre del cliente">
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-phone-square" aria-hidden="true"></i> Celular</label>
+                            <input id="clientPhoneForm" type="text" class="form-control border-input"  value="" placeholder="Ingrese celular">
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-envelope" aria-hidden="true"></i> Correo</label>
+                            <input id="clientEmailForm" type="email" name="email" class="form-control border-input"  value="" placeholder="Ingrese correo">
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-home" aria-hidden="true"></i> Dirección</label>
+                            <input id="clientDirectionForm" type="text" class="form-control border-input"  value="" placeholder="Ingrese dirección">
+                        </div>
+
+                        <div class="col-md-3" style="margin-top:20px;">
+                            <button id="cleanNewClientForm" class="btn btn-dark btn-block" >LIMPIAR</button>
+                        </div>
+
+                        <div class="col-md-9" style="margin-top:20px;">
+                            <button id="createNewClientForm" class="btn btn-primary btn-block" > AGREGAR NUEVO CLIENTE  <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>    
+            `,
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            animation: false,
+            customClass: 'animated fadeIn'
+        })
+
+        $('#cleanNewClientForm').on('click', function () {
+            $('#clientNameForm').val('')
+            $('#clientDirectionForm').val('')
+            $('#clientPhoneForm').val('')
+            $('#clientEmailForm').val('')
+            $('#clientNameForm').focus()
+        })
+        $('#createNewClientForm').on('click', function(){
+            let newClientFormName = $('#clientNameForm').val() 
+            let newClientFormDirection = $('#clientDirectionForm').val()
+            let newClientFormPhone = $('#clientPhoneForm').val()
+            let newClientFormEmail = $('#clientEmailForm').val()
+
+            ajax({
+                url: 'api/newClientSat', 
+                type: 'POST',
+                data: {
+                    name: newClientFormName,
+                    address: newClientFormDirection,
+                    phone: newClientFormPhone,
+                    email: newClientFormEmail
+                }
+            }).then(res=>{
+                if (res.err){
+                    toastr.error(res.err)
+                }else{
+                    swal({
+                        title: 'Agregado!',
+                        text: res.ok,
+                        backdrop: 'static', 
+                        keyboard: false,
+                        type: 'success',
+                        timer: 3000
+                    }).then(result=>{
+                        newRepair()
+                    })
+
+                   
+                }
+            })
+
+        })
+    })
+    /* Modal agregar Tipo de equipo */
+    $('#modal_body').on('click', '#createEquipmentFormButton', function () {
+        swal({
+            title: '',
+            html:`
+                <div style="padding:5px;"> 
+                    <h4>INGRESE UN NUEVO EQUIPO</h4>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-laptop" aria-hidden="true"></i> Tipo</label>
+                            <input id="equipmentForm" type="text" class="form-control border-input"  required placeholder="Ingrese tipo de equipo">
+                        </div>
+
+                        <div class="col-md-3" style="margin-top:20px;">
+                            <button id="cleanNewEquipmentForm" class="btn btn-dark btn-block" >LIMPIAR</button>
+                        </div>
+
+                        <div class="col-md-9" style="margin-top:20px;">
+                            <button id="createNewEquipmentForm" class="btn btn-primary btn-block" > AGREGAR NUEVO EQUIPO  <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>    
+            `,
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            animation: false,
+            customClass: 'animated fadeIn'
+        })
+        $('#cleanNewEquipmentForm').on('click', function () {
+            $('#equipmentForm').val('')
+            $('#equipmentForm').focus()
+        })
+
+        $('#createNewEquipmentForm').on('click', function () {
+            let newEquipmentFormName = $('#equipmentForm').val()
+            ajax({
+                url: 'api/newEquipmentSat',
+                type: 'POST',
+                data: {
+                    equipment: newEquipmentFormName
+                }
+            }).then(res => {
+               	swal({
+                    title: 'Agregado!',
+                    backdrop: 'static', 
+                    keyboard: false,
+                    text: res.ok,
+                    type: 'success',
+                    timer: 60000
+                })
+            })
+
+        })
+    })
+
+    /* Modal agregar Marca */
+    $('#modal_body').on('click', '#createBrandFormButton', function () {
+        swal({
+            title: '',
+            html:`
+                <div style="padding:5px;"> 
+                    <h4>INGRESE UNA NUEVA MARCA</h4>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-bookmark" aria-hidden="true"></i> Marca</label>
+                            <input id="brandForm" type="text" class="form-control border-input" required placeholder="Ingrese nueva marca">
+                        </div>
+
+                        <div class="col-md-3" style="margin-top:20px;">
+                            <button id="cleanNewBrandForm" class="btn btn-dark btn-block" >LIMPIAR</button>
+                        </div>
+
+                        <div class="col-md-9" style="margin-top:20px;">
+                            <button id="" class="btn btn-primary btn-block" > AGREGAR NUEVA MARCA  <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>    
+            `,
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            animation: false,
+            customClass: 'animated fadeIn'
+        })
+        $('#cleanNewBrandForm').on('click', function () {
+            $('#brandForm').val('')
+            $('#brandForm').focus()
+        })
+        
+    })
+    
+    /* Modal agregar Modelo */
+    $('#modal_body').on('click', '#createModelFormButton', function () {
+        swal({
+            title: '',
+            html:`
+                <div style="padding:5px;"> 
+                    <h4>INGRESE UN NUEVO MODELO</h4>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <label style="float:left;"><i class="fa fa-bookmark" aria-hidden="true"></i> Modelo</label>
+                            <input id="modelForm" type="text" class="form-control border-input" required placeholder="Ingrese nuevo modelo">
+                        </div>
+
+                        <div class="col-md-3" style="margin-top:20px;">
+                            <button id="cleanNewModelForm" class="btn btn-dark btn-block" >LIMPIAR</button>
+                        </div>
+                        <div class="col-md-9" style="margin-top:20px;">
+                            <button id="" class="btn btn-primary btn-block" > AGREGAR NUEVO MODELO  <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>    
+            `,
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            animation: false,
+            customClass: 'animated fadeIn'
+        })
+        $('#cleanNewModelForm').on('click', function () {
+            $('#modelForm').val('')
+            $('#modelForm').focus()
+        })
+    })
+
+   
+    function newRepair() {
+        $('#satModal').modal();
+        $('#modal_title').text('INGRESAR NUEVO EQUIPO');
+        $('#modal_body').html(`
+            <div style="padding:5px;"> 
+                <div class="row">
+
+                     <div class="col-md-12">
+                        <label for="tecnicoseleccion"><i class="fa fa-user-circle" aria-hidden="true"></i> Técnico</label>
+                        <div class="row"> 
+                            <div class="col-md-12" style="margin-top:5px;">
+                                <select id="selectTechnical">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12"  style="margin-top:20px;">
+                        <label for="tecnicoseleccion"><i class="fa fa-user" aria-hidden="true"></i> Cliente</label>
+                        <div class="row"> 
+                            <div class="col-md-8" style="margin-top:5px;">
+                                <select id="selectClient" name="state">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-md-1" style="margin-top:5px;">
+                                <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                            </div>
+                            <div class="col-md-1" style="margin-top:5px;">
+                                <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="createClientFormButton" class="btn btn-dark btn-block"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <div class="col-md-12"  style="margin-top:20px;">
+                        <label for="tecnicoseleccion"><i class="fa fa-laptop" aria-hidden="true"></i> Tipo de equipo</label>
+                        <div class="row"> 
+                            <div class="col-md-10" style="margin-top:5px;">
+                                <select id="selectEquipment" name="state">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="createEquipmentFormButton" class="btn btn-dark btn-block"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <div class="col-md-6"  style="margin-top:20px;">
+                        <label><i class="fa fa-bookmark" aria-hidden="true"></i> Marca</label>    
+                    </div>
+                    <div class="col-md-6"  style="margin-top:20px;">
+                        <label><i class="fa fa-bookmark" aria-hidden="true"></i> Modelo</label>    
+                    </div>
+
+                    <div class="col-md-12" >
+                        <div class="row"> 
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <select id="selectBrand">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="createBrandFormButton" class="btn btn-dark btn-block" disabled><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div> 
+                             <div class="col-md-4" style="margin-top:5px;">
+                                <select id="selectModel">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="createModelFormButton" class="btn btn-dark btn-block" disabled><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" style="margin-top:20px;">
+                        <label><i class="fa fa-list-ol" aria-hidden="true"></i> Accesorios</label>
+                        <textarea id="repairAccessoryForm" rows="2" class="form-control border-input" placeholder="Ingrese los accesorios"></textarea>
+                    </div>
+
+                    <div class="col-md-12" style="margin-top:20px;">
+                        <label><i class="fa fa-times" aria-hidden="true"></i> Razón de ingreso</label>
+                        <textarea id="repairFailForm" rows="2" class="form-control border-input" placeholder="Ingrese la razón de ingreso"></textarea>
+                    </div>
+
+                    <div class="col-md-3" style="margin-top:20px;">
+                    	<button id="cleanNewRepairForm" class="btn btn-dark btn-block" >LIMPIAR</button>
+                    </div>
+                     <div class="col-md-9" style="margin-top:20px;">
+                    	<button id="createNewRepairForm" class="btn btn-primary btn-block" > AGREGAR NUEVO EQUIPO  <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                    </div>
+
+                </div>   
+            </div>
+            `)
+               //AGREGAR REPARACION
+        $('#createNewRepairForm').on('click', function () {
+            let newRepairtFormTechnical = $('#selectTechnical').select2('data')[0].text;
+            let newRepairFormClient = $('#selectClient').select2('data')[0].text;
+            let newRepairFormEquipment = $('#selectEquipment').select2('data')[0].text;
+            let newRepairFormBrand = $('#selectBrand').select2('data')[0].text;
+            let newRepairFormModel = $('#selectModel').select2('data')[0].text;
+            let newRepairFormAccessory = $('#repairAccessoryForm').val();
+            let newRepairFormFail = $('#repairFailForm').val();
+
+
+            ajax({
+                url: 'api/newRepairSat',
+                type: 'POST',
+                data: {
+                    technical: newRepairtFormTechnical,
+                    client: newRepairFormClient,
+                    equipment: newRepairFormEquipment,
+                    brand: newRepairFormBrand,
+                    model: newRepairFormModel,
+                    accesory: newRepairFormAccessory,
+                    fail: newRepairFormFail
+                }
+            }).then(res => {
+                swal({
+                    title: 'Agregado!',
+                    text: res.ok,
+                    backdrop: 'static',
+                    keyboard: false,
+                    type: 'success',
+                    timer: 3000
+                })
+            })
+        })
+        //FALTA LIMPIAR
+        $('#cleanNewRepairForm').on('click', function () {
+            newRepair()
+        })
+        /*
+            CARGAR LOS SELECT2 INICIO
+        */
+
+        ajax({ // cargar técnicos
+            url: 'api/users'
+        }).then(res => {
+            selects.technicals = res.reduce((arr, el, i) => {
+                return arr.concat({
+                    id: i,
+                    text: el.name + ' ' + el.lastname
+                })
+            }, [])
+
+            $('#selectTechnical').select2({
+                placeholder: "Seleccione técnico",
+                width: '100%',
+                data: selects.technicals
+            });
+        })
+
+        ajax({
+            url: 'api/satClients'
+        }).then(res => {
+            clientsData = res;
+            selects.clients = res.reduce((arr, el, i) => {
+                return arr.concat({
+                    id: i,
+                    text: el.name
+                })
+            }, [])
+
+
+            $('#selectClient').select2({
+                placeholder: "Seleccione cliente",
+                width: '100%',
+                data: selects.clients
+            });
+        })
+
+        ajax({
+            url: 'api/satEquipment'
+        }).then(res => {
+            console.log(res)
+            satEquipment = res.types
+            selects.equipmentTypes = satEquipment.reduce((arr, el, i) => {
+                return arr.concat(el.type)
+            }, []);
+
+            $('#selectEquipment').select2({
+                placeholder: "Seleccione equipo",
+                width: '100%',
+                data: selects.equipmentTypes
+            });
+
+
+            $('#selectBrand').select2({
+                placeholder: "Seleccione marca",
+                allowClear: true,
+                width: '100%',
+                disabled: true
+            });
+
+
+            $('#selectModel').select2({
+                placeholder: "Seleccione modelo",
+                allowClear: true,
+                width: '100%',
+                disabled: true
+            });
+            
+            $('#selectClient').on('change', function (e) {
+                let selectedClient = $('#selectClient').select2('data')[0].text;
+                console.log(clientsData)
+                alert(selectedClient)
+            });
+
+            $('#selectEquipment').on('change', function (e) {
+                $('#selectBrand').prop('disabled', false);
+                $('#createBrandFormButton').prop('disabled', false);
+                let equipmentSelected = $('#selectEquipment').select2('data')[0].text;
+                console.log(equipmentSelected)
+
+                let brandSelected = satEquipment.filter(function (el) {
+                    return el.type == equipmentSelected
+                })
+                selects.brands = brandSelected[0].brands.reduce((arr, el, i) => {
+                    return arr.concat({
+                        id: i,
+                        text: el.brand
+                    })
+                }, [])
+
+                console.log(selects.brands)
+                $('#selectBrand').empty()
+                $('#selectBrand').select2({
+                    placeholder: "Seleccione marca",
+                    width: '100%',
+                    data: selects.brands
+                }).change();
+
+            });
+
+            $('#selectBrand').on('change', function (e) {
+                $('#selectModel').prop('disabled', false);
+                $('#createModelFormButton').prop('disabled', false);
+                let equipmentSelected = $('#selectEquipment').select2('data')[0].text;
+                let textBrandSelected = $('#selectBrand').select2('data')[0].text;
+
+                let typeSelected = satEquipment.filter(function (el) {
+                    return el.type == equipmentSelected
+                })
+
+                console.log(typeSelected)
+
+                let brandSelected = typeSelected[0].brands.filter(function (el) {
+                    return el.brand == textBrandSelected
+                })
+
+                console.log(brandSelected)
+
+                selects.models = brandSelected[0].models.reduce((arr, el, i) => {
+                    return arr.concat({
+                        id: i,
+                        text: el
+                    })
+                }, [])
+
+                $('#selectModel').empty()
+                $('#selectModel').select2({
+                    placeholder: "Seleccione modelo",
+                    width: '100%',
+                    data: selects.models
+                });
+
+            });
+
+        })
+
+        /*
+             CARGAR LOS SELECT2 FIN
+         */
+        
+    }
+     
+
+    
+</script> 
+{{/extend}}

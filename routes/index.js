@@ -8,11 +8,13 @@ import APITools from './api/tools';
 import APILogs from './api/logs';
 import APIEmails from './api/emails';
 import APIHostings from './api/hostings';
+import APISat from './api/sat';
 
 import Clients from './clients';
 import Users from './users';
 import Logs from './logs';
 import Hostings from './hostings';
+import Sat from './sat';
 //import machineEntry from './entry';
 
 import loginHandler from './handlers/loginHandler';
@@ -114,6 +116,7 @@ const Routes = [].concat(
     Users,
     Logs,
     Hostings,
+    Sat,
     CheckSession,
     //machineEntry,
     // default404,
@@ -123,7 +126,8 @@ const Routes = [].concat(
     APITools,
     APILogs,
     APIEmails,
-    APIHostings
+    APIHostings,
+    APISat
 );
 
 export default Routes;
