@@ -1295,24 +1295,33 @@ $("a[href='#generate_report']").on('show.bs.tab', function(e) {
       $('.nav-pills a[href="#info"]').tab('show'); // ir a pestaña de información del cliente
     } else {
       res.forEach(el => {
-        if (el.business == 'Tronit Ltda') invoicesReport.tronit += el.amount;
-        if (el.business == 'Michcom Ltda') invoicesReport.michcom += el.amount;
-  
+        let businessRow = '';
+
+        if (el.business == 'Tronit Ltda') {
+          invoicesReport.tronit += el.amount;
+          businessRow = 'TRONIT E.I.R.L.';
+        }
+        if (el.business == 'Michcom Ltda') {
+          invoicesReport.michcom += el.amount;
+          businessRow = 'MICHCOM LTDA.';
+        }
+
         invoicesReport.rows.push([el.invoice, el.description, el.business, '$' + number_format(el.amount)]);
         $('#report_table_invoices').append(`
             <tr>
-                <td>${el.invoice}</td>
+                <td style="padding:3px;">${el.invoice}</td>
                 <td>${el.description}</td>
-                <td>${el.business}</td>
+                <td>${businessRow}</td>
                 <td>$ ${number_format(el.amount)}</td>
             </tr>
         `);
       });
     }
 
-    $('#michcomReportTotalOwed').text('$'+ number_format(invoicesReport.michcom));
-    $('#tronitReportTotalOwed').text('$' + number_format(invoicesReport.tronit));
-    
+    //$('#michcomReportTotalOwed').text('$'+ number_format(invoicesReport.michcom));
+    //$('#tronitReportTotalOwed').text('$' + number_format(invoicesReport.tronit));
+    $('#totalReportOwed').text('$ ' + number_format(invoicesReport.michcom + invoicesReport.tronit));
+
     $('#initpdf').removeClass('disabled');
     $('#sendEmail').removeClass('disabled');
   });
@@ -1326,6 +1335,9 @@ $("a[href='#generate_report']").on('show.bs.tab', function(e) {
   $('#report_business_rut').text($.formatRut(selectedClient.rut));
   $('#report_business_address').text(selectedClient.address);
 });
+/*
+
+*/
 
 $('#new').on('change', '#newInvoiceType', function() {
   if ($('#newInvoiceType').val() === 'product') {

@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import nodemailer from 'nodemailer';
+import moment from 'moment-timezone';
 
 require('dotenv').load()
 
@@ -39,19 +40,24 @@ const emails = [
         let to = JSON.parse(request.payload.to);
         let html = request.payload.html;
 
+        moment.locale('es');
+
         html+= `
-            <center>
             <div>
                 <span>
                     <img src="cid:logomichcom"/>
                 </span>
             </div>
+
+            <br>
+            <center>
+                Curicó, ${moment.tz('America/Santiago').format('dddd DD [de] MMMM [de] YYYY')}
             </center>
         `;
         mailOptions.attachments = [
             {
                 filename: 'logomichcom.png',
-                path: 'http://michcom.cl/images/logomichcom.png',
+                path: 'http://michcom.cl/images/contamichcom.png',
                 cid: 'logomichcom' //same cid value as in the html img src
             },
             /*
