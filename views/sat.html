@@ -45,6 +45,7 @@
                             <th>Equipo</th>
                             <th>Fecha</th>
                             <th>Razón de ingreso</th>
+                            <th>Técnico</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
@@ -111,6 +112,7 @@
         brands: [],
         models: []
     }
+    let repairRowSelectedData;
 
     jQuery(document).ready(function ($) {
         chargeTable()
@@ -127,79 +129,42 @@
 //MANTENEDOR DE CLIENTES
           
 $('#newClientKeepButton').on('click', function () {
-alert('hola');
+    //alert('hola');
+    $('#satModal').modal();
 });
 
-//
-/*
+
+
 //DATATABLE INICIO
   	function chargeTable() {
             datatable = $('#table')
-                .DataTable({
-                    "iDisplayLength": 100,
-                    "oLanguage": {
-                        "sSearch": ""
-                    },
-                    "responsive": true,
-                    "columns": [
-                        { "data": "_id" },       
-                        { "data": "client" },
-                        { "data": "brand" },
-                        { "data": "model" },
-                        { "data": "fail" },
-                        { "data": "status" }
-                        
-                    ],
-                    initComplete: function (settings, json) {
-                        ajax({
-                            url:'api/satRepairs'
-                        }).then(res => {
-                            if (res.err){
-                                toastr.warning('No existen reparaciones')
-                            }else{
-                                let allRepairs = res.reduce ((arr, el, i)=>{
-                                    return arr.concat({
-                                        id:i,
-                                        text: el.brand + '' + el.model
-                                    })
-                                }, []) 
-
-                                 selects.technicals = res.reduce((arr, el, i) => {
-                                    return arr.concat({
-                                        id: i,
-                                        text: el.name + ' ' + el.lastname
-                                    })
-                                }, []) 
-                            }
-                        })
-                        $.ajax({
-
-                            url: 'api/sat'
-                        })
-                            .done(function (data) {
-                                if (!data.err) {
-                                    $.each(data, function (index, val) {
-                                        satData.push({
-                                            date: val._id,
-                                            client: val.client,
-                                            brand: val.brand,
-                                            model: val.model,
-                                            fail: val.fail
-                                        })
-                                    });
-
-                                    datatable.rows.add(satData).draw();
-                                } else {
-                                    toastr.warning('No existen reparaciones')
-                                }
-                                $('#loadingRepairs').empty();
-                            })
-                            .fail(function () {
-                                console.log("error al cargar clientes");
-                                $('#loadingRepairs').empty();
-                            });
-                    }
-                });
+            .DataTable({
+                "iDisplayLength": 100,
+                "oLanguage": {
+                    "sSearch": ""
+                },
+                "responsive": true,
+                "columns": [
+                    { "data": "client" },       
+                    { "data": "equipment" },
+                    { "data": "date" },
+                    { "data": "fail" },
+                    { "data": "technical" },
+                    { "data": "status" },
+                ],
+                initComplete: function (settings, json) {
+                    ajax({
+                        url:'api/satRepairs'
+                    }).then(res => {
+                        if (res.err){
+                            toastr.warning('No existen reparaciones')
+                        }else{                               
+                            datatable.rows.add(res).draw();
+                            $('#loadingRepairs').empty();
+                        }
+                    })
+                }
+            });
 
 
             $('#table tbody').on('click', 'tr', function () {
@@ -210,19 +175,16 @@ alert('hola');
                 } else {
                     datatable.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
-                    selectedClientRow = datatable.row($(this));
-                    selectedClientData = datatable.row($(this)).data();
-                    var replace1 = selectedClientData.rut.split('.').join('');
-                    var replace2 = replace1.replace('-', '');
-                    selectedClientRut = replace2;
-
+                    //repairRowSelected = datatable.row($(this));
+                    repairRowSelectedData = datatable.row($(this)).data();
+                    console.log(repairRowSelectedData)
                     $('#modButton').prop('disabled', false);
                     $('#desButton').prop('disabled', false);
                 }
             });
         }
 //DATATABLE FINAL
-*/
+
 
     $('#satModal').on('shown.bs.modal', function () { // IMPORTANTE FOCUS MODAL SWAL
         $(document).off('focusin.modal');

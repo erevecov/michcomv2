@@ -109,7 +109,7 @@
 	var dSelectedUserRow;
 	var dSelectedUserData;
 	var disabledUsersData = [];
-
+ 
 
 	jQuery(document).ready(function($) {	
 		chargeTable();
@@ -496,6 +496,75 @@
 			}
 
 		});
+
+		$('#modButton').on('click', function() {
+			$('#usersModal').modal();
+			$('#modal_title').text('MODIFICAR USUARIO '+selectedUserData.name);
+
+			console.log(selectedUserData)
+			$.ajax({
+				url: 'api/getUser',
+				type: 'POST',
+				data: {user: selectedUserData.email},
+			})
+			.done(function(data) {
+				console.log(data);
+
+				$('#modal_body').html(`
+
+				<div class="row"> 
+					<div class="col-md-12">
+						<label class="control-label"><i class="fa fa-envelope-o" aria-hidden="true"></i> Email</label>  
+						<input disabled id="modUserEmail" placeholder="Email del usuario" class="form-control" type="text" value="${selectedUserData.email}">
+					</div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label" ><i class="fa fa-user" aria-hidden="true"></i> Nombre</label> 
+						<input id="modUserName" placeholder="Nombre del usuario" class="form-control" type="text" value="${selectedUserData.name}">
+					</div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label" ><i class="fa fa-user" aria-hidden="true"></i> Apellido</label> 
+						<input id="modUserLastname" placeholder="Apellido del usuario" class="form-control" type="text" value="${selectedUserData.lastname}">
+					</div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label"><i class="fa fa-lock" aria-hidden="true"></i> Password</label>  
+						<input id="modUserPassword" placeholder="Cambiar contraseña del usuario" class="form-control" type="password">		
+					</div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label" ><i class="fa fa-asterisk" aria-hidden="true"></i> Rol</label> 
+						<select class="form-control" id="newUserRole">
+							<option value="admin">Administrador</option>
+						</select>
+					</div>
+
+					<div style="display: none; margin-top:20px;" id="form_messages"></div>
+
+					<!-- Button -->
+					<div class="col-md-12" style="margin-top:20px;">
+						<button id="sendModUser" class="btn btn-primary btn-block" >MODIFICAR USUARIO <i class="fa fa-paper-plane" aria-hidden="true"></i></button>	
+					</div>
+
+					
+				</div>
+				
+			`)
+
+			$.each(data.emails, function(index, val) {
+				$('#email-list').append('<li class="list-group-item"><a href="#" class="btn btn-default btn-xs"><i class="fa fa-times-circle" aria-hidden="true"></i></a>'+val+'</li>');
+			});
+
+			})
+			.fail(function() {
+				console.log("error");
+			});
+			
+
+
+		});
+
 		
 		function isColor(color) {
 			var isOk  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color)

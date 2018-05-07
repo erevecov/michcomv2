@@ -35,7 +35,7 @@ const sat = [{ // todos los clientes habilitados
 //api traer reparaciones
 { 
     method: 'GET',
-    path: '/api/satRepairs',
+    path: '/api/satRepairs', 
     options: {
         handler: (request, h) => {
             return new Promise(resolve => {
@@ -50,7 +50,23 @@ const sat = [{ // todos los clientes habilitados
                     if (err) throw err;
 
                     if (result.docs[0]) {
-                        resolve(result.docs);
+                        let res = result.docs.reduce((arr, el, i)=>{
+                            return arr.concat({
+                                _id: el._id,
+                                date: moment(el._id).format('DD/MM/YYYY hh:mm'),
+                                status: el.status,
+                                technical: el.technical,
+                                client: el.client,
+                                equipment: `${el.equipment} ${el.brand} ${el.model}`,
+                                accesory: el.accesory,
+                                fail: el.fail,
+                                equip: el.equipment,
+                                brand: el.brand,
+                                model: el.model
+                            })
+                        }, []) 
+
+                        resolve(res);
                     } else {
                         resolve({ err: 'no existen reparaciones' });
                     }

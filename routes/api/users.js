@@ -185,6 +185,34 @@ const Users = [{ // ver todos
             })
         }
     }
-}];
+},
+{ // traer un usuario
+  method: 'POST',
+  path: '/api/getUser',
+  options: {
+      handler: (request, h) => {
+        let user = request.payload.user;
+
+        return new Promise(resolve=>{
+          db.find({ 
+              "selector": {
+                  "_id": user,
+                  "type": "user"
+              },
+              "limit":1
+          }, (err, result) => {
+              if (err) throw err;
+
+              if (result.docs[0]) resolve(result.docs[0]);
+          });
+        });
+      },
+      validate: {
+        payload: Joi.object().keys({
+            user: Joi.string()
+        })
+      }
+  }
+},];
 
 export default Users;
