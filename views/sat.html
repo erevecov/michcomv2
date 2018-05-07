@@ -102,6 +102,7 @@
 
 
 {{#extend "js"}}
+<script src="public/js/datetime-moment.js"></script>
 <script>
     let clientsData; // todos los datos de todos los clientes
     let satEquipment; // todos los datos de equipos, marcs, modelos
@@ -113,14 +114,17 @@
         models: []
     }
     let repairRowSelectedData;
+    let datatable;
 
     jQuery(document).ready(function ($) {
         chargeTable()
+        /*
         ajax({
             url: 'api/clients'
         }).then(res=>{
             console.log(res)
         })
+        */
 
 
         NProgress.done(); /* TODO CARGADO! */
@@ -136,55 +140,72 @@ $('#newClientKeepButton').on('click', function () {
 
 
 //DATATABLE INICIO
-  	function chargeTable() {
-            datatable = $('#table')
-            .DataTable({
-                "iDisplayLength": 100,
-                "oLanguage": {
-                    "sSearch": ""
-                },
-                "responsive": true,
-                "columns": [
-                    { "data": "client" },       
-                    { "data": "equipment" },
-                    { "data": "date" },
-                    { "data": "fail" },
-                    { "data": "technical" },
-                    { "data": "status" },
-                ],
-                initComplete: function (settings, json) {
-                    ajax({
-                        url:'api/satRepairs'
-                    }).then(res => {
-                        if (res.err){
-                            toastr.warning('No existen reparaciones')
-                        }else{                               
-                            datatable.rows.add(res).draw();
-                            $('#loadingRepairs').empty();
-                        }
-                    })
+function chargeTable() {
+    $.fn.dataTable.moment( 'DD/MM/YYYY hh:mm' );
+    datatable = $('#table')
+    .DataTable({
+        "order": [[ 2, "desc" ]],
+        "iDisplayLength": 100,
+        "oLanguage": {
+            "sSearch": ""
+        },
+        "responsive": true,
+        "columns": [
+            { "data": "client" },       
+            { "data": "equipment" },
+            { "data": "date" },
+            { "data": "fail" },
+            { "data": "technical" },
+            { "data": "status" },
+        ],
+        initComplete: function (settings, json) {
+            ajax({
+                url:'api/satRepairs'
+            }).then(res => {
+                if (res.err){
+                    toastr.warning('No existen reparaciones')
+                }else{                               
+                    datatable.rows.add(res).draw();
+                   
+                    $('#loadingRepairs').empty();
                 }
-            });
-
-
-            $('#table tbody').on('click', 'tr', function () {
-                if ($(this).hasClass('selected')) {
-                    $(this).removeClass('selected');
-                    $('#modButton').prop('disabled', true);
-                    $('#desButton').prop('disabled', true);
-                } else {
-                    datatable.$('tr.selected').removeClass('selected');
-                    $(this).addClass('selected');
-                    //repairRowSelected = datatable.row($(this));
-                    repairRowSelectedData = datatable.row($(this)).data();
-                    console.log(repairRowSelectedData)
-                    $('#modButton').prop('disabled', false);
-                    $('#desButton').prop('disabled', false);
-                }
-            });
+            })
         }
+    });
+
+
+
+    $('#table tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+            $('#modButton').prop('disabled', true);
+            $('#desButton').prop('disabled', true);
+        } else {
+            datatable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            //repairRowSelected = datatable.row($(this));
+            repairRowSelectedData = datatable.row($(this)).data();
+            console.log(repairRowSelectedData)
+            $('#modButton').prop('disabled', false);
+            $('#desButton').prop('disabled', false);
+        }
+    });
+}
 //DATATABLE FINAL
 
+    function reloadRepairTable() {
+        ajax({
+            url:'api/satRepairs'
+        }).then(res => {
+            if (res.err){
+                toastr.warning('No existen reparaciones')
+            }else{       
+                datatable.clear().draw();                        
+                datatable.rows.add(res).draw();
+            }
+        })
+        
+    }
 
     $('#satModal').on('shown.bs.modal', function () { // IMPORTANTE FOCUS MODAL SWAL
         $(document).off('focusin.modal');
@@ -539,7 +560,9 @@ $('#newClientKeepButton').on('click', function () {
                     keyboard: false,
                     type: 'success',
                     timer: 3000
-                })
+                });
+                
+                reloadRepairTable();
             })
         })
         //FALTA LIMPIAR
