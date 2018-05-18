@@ -508,7 +508,7 @@
 				data: {user: selectedUserData.email},
 			})
 			.done(function(data) {
-				console.log(data);
+				//console.log(data);
 
 				$('#modal_body').html(`
 
@@ -527,15 +527,20 @@
 						<label class="control-label" ><i class="fa fa-user" aria-hidden="true"></i> Apellido</label> 
 						<input id="modUserLastname" placeholder="Apellido del usuario" class="form-control" type="text" value="${selectedUserData.lastname}">
 					</div>
-
+					
 					<div class="col-md-12" style="margin-top:20px;">
 						<label class="control-label"><i class="fa fa-lock" aria-hidden="true"></i> Password</label>  
-						<input id="modUserPassword" placeholder="Cambiar contraseña del usuario" class="form-control" type="password">		
+						<input id="modUserPassword" placeholder="Nueva Contraseña del usuario" class="form-control" type="password">		
+					</div>
+
+					<div class="col-md-12" style="margin-top:20px;">
+						<label class="control-label"><i class="fa fa-lock" aria-hidden="true"></i> Confirmar Password</label>  
+						<input id="modUserPassword2" placeholder="Confirmar nueva contraseña del usuario" class="form-control" type="password">		
 					</div>
 
 					<div class="col-md-12" style="margin-top:20px;">
 						<label class="control-label" ><i class="fa fa-asterisk" aria-hidden="true"></i> Rol</label> 
-						<select class="form-control" id="newUserRole">
+						<select class="form-control" id="modUserRole">
 							<option value="admin">Administrador</option>
 						</select>
 					</div>
@@ -546,15 +551,51 @@
 					<div class="col-md-12" style="margin-top:20px;">
 						<button id="sendModUser" class="btn btn-primary btn-block" >MODIFICAR USUARIO <i class="fa fa-paper-plane" aria-hidden="true"></i></button>	
 					</div>
-
-					
 				</div>
-				
-			`)
+				`)
 
+				$('#sendModUser').on('click', ()=> {
+					
+					let modCount = 0;
+					let modUserName = $('#modUserName').val();
+					let modUserLastname = $('#modUserLastname').val();
+					let modUserPassword = $('#modUserPassword').val();
+					let modUserPassword2 = $('#modUserPassword2').val();
+					let modUserRole = $('#modUserRole').val();
+
+					ajax({
+					url: 'api/modUser',
+					type: 'POST',
+					data: {
+						userId: selectedUserData.email,
+						userName: modUserName,
+						userLastname: modUserLastname,
+						userPassword: modUserPassword,
+						userRole: modUserRole
+					}
+					}).then(res => {
+						if (res.error) {
+							toastr.error(res.error)
+						} else {
+							swal({
+								title: 'Usuario Modificado correctamente!',
+								text: res.ok,
+								backdrop: 'static',
+								keyboard: false,
+								type: 'success',
+								timer: 3000
+							}).then(result => {
+								//$('#satModal').modal('hide')
+								//reloadRepairTableClient()
+							})
+						}
+					})
+				});
+			/*
 			$.each(data.emails, function(index, val) {
 				$('#email-list').append('<li class="list-group-item"><a href="#" class="btn btn-default btn-xs"><i class="fa fa-times-circle" aria-hidden="true"></i></a>'+val+'</li>');
 			});
+			*/
 
 			})
 			.fail(function() {

@@ -213,6 +213,59 @@ const Users = [{ // ver todos
         })
       }
   }
+},
+
+{ // modificar usuario 
+    method: 'POST',
+    path: '/api/modUser',
+    options: {
+        handler: (request, h) => {
+            let id = request.payload.userId;
+            let name = request.payload.userName;
+            let lastName = request.payload.userLastname;
+            let password = md5(request.payload.userPassword);
+            let role = request.payload.userRole;
+            let modUserObj = {};
+
+            return new Promise(resolve => {
+                db.find({
+                    "selector": {
+                        "_id": id,
+                        "type": "user",
+                        "status": "enabled"
+                    },
+                    "limit": 1
+                }, function (err, result) {
+                    if (err) throw err;
+
+                    if (result.docs[0]) {
+                        modUserObj = result.docs[0];
+                        modUserObj.name = name;
+                        modUserObj.lastname = lastName;
+                        modUserObj.password = password;
+                        modUserObj.role = role;
+
+                        db.insert(modUserObj, function (errUpdate, body) {
+                            if (errUpdate) throw errUpdate;
+
+                            resolve({ ok: 'Usuario ' + modUserObj.name + ' modificado correctamente' });
+                        });
+                    } else {
+                        resolve({ error: 'el usuario de email ' + email + ' no existe' });
+                    }
+                });
+            });
+        },
+        validate: {
+            payload: Joi.object().keys({
+                userId: Joi.string(),
+                userName: Joi.string(),
+                userLastname: Joi.string(),
+                userPassword: Joi.string().allow(''),
+                userRole: Joi.string().allow('')
+            })
+        }
+    }
 },];
 
 export default Users;
