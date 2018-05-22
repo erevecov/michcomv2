@@ -55,7 +55,7 @@
 			<div class="col-md-2 col-xs-12 box-shadows">
 				<br>	
 				<button class="btn btn-success btn-block" id="habButton" disabled>
-					<i class="fa fa-times" aria-hidden="true"></i> Habilitar
+					<i class="fa fa-plus" aria-hidden="true"></i> Habilitar
 				</button>
 				<br>		
 			</div>
@@ -130,33 +130,11 @@
 					{"data" : "role"}
 				],
 				initComplete: function(settings, json) {
-	 				$.ajax({
-						url: 'api/users'
-					})
-					.done(function(data) {
-						if (!data.err) {
-							$.each(data, function(index, val) {
-								usersData.push({
-									email: val._id,
-									name: val.name,
-									lastname: val.lastname,
-									role: val.role
-								})
-							});
-
-							datatable.rows.add(usersData).draw();
-						} else {
-							toastr.warning('No existen usuarios habilitados')
-						}
-						
-						$('#loadingUsers').empty();
-					})
-					.fail(function() {
-						$('#loadingUsers').empty();
-						console.log("error al cargar clientes");
-					});
+	 				reloadTableUsers()
   				}
 			});
+
+			
 
 			$('#table tbody').on( 'click', 'tr', function () {
         		if ( $(this).hasClass('selected') ) {
@@ -174,6 +152,66 @@
 		            $('#desButton').prop('disabled', false);
 	        	}
     		});
+		}
+
+		function reloadTableUsers() {
+			getDataUsers().then(res=>{
+				datatable.clear().draw();
+                datatable.rows.add(res).draw();	
+			})
+    	}
+
+		function getDataUsers() {
+			return new Promise((resolve)=>{
+				ajax({
+					url: 'api/users'
+				}).then(res=>{
+					if (!res.err) {
+
+						resolve(res.reduce((arr, el, i) => {
+							return arr.concat({
+								email: el._id,
+								name: el.name,
+								lastname: el.lastname,
+								role: el.role
+							})
+						}, []));
+
+					} else {
+						toastr.warning('No existen usuarios habilitados')
+					}
+						
+					$('#loadingUsers').empty();
+				});
+			});
+			
+			/*
+			$.ajax({
+				url: 'api/users'
+			})
+			.done(function(data) {
+				if (!data.err) {
+					$.each(data, function(index, val) {
+						usersData.push({
+							email: val._id,
+							name: val.name,
+							lastname: val.lastname,
+							role: val.role
+						})
+					});
+
+					datatable.rows.add(usersData).draw();
+				} else {
+					toastr.warning('No existen usuarios habilitados')
+				}
+				
+				$('#loadingUsers').empty();
+			})
+			.fail(function() {
+				$('#loadingUsers').empty();
+				console.log("error al cargar clientes");
+			});
+			*/
 		}
 
 		function chargeTable2() {
@@ -273,7 +311,7 @@
 						$( newRowAdded ).css( 'color', '#f1c40f' );
 
 						setTimeout(function() {
-							$( newRowAdded ).css( 'color', 'black' );
+							$( newRowAdded ).css( 'color', '#373a3c' );
 						}, 6000);
 
 						$('#modButton').prop('disabled', true);
@@ -334,7 +372,7 @@
 						$( newRowAdded ).css( 'color', '#f1c40f' );
 
 						setTimeout(function() {
-							$( newRowAdded ).css( 'color', 'black' );
+							$( newRowAdded ).css( 'color', '#373a3c' );
 						}, 6000);
 
 		            	$('#habButton').prop('disabled', true);
@@ -544,8 +582,10 @@
 							<option value="admin">Administrador</option>
 						</select>
 					</div>
-
-					<div style="display: none; margin-top:20px;" id="form_messages"></div>
+					
+					<div class="col-md-12" style="margin-top:20px;">
+						<div style="display: none;" id="form_messages"></div>
+					</div>
 
 					<!-- Button -->
 					<div class="col-md-12" style="margin-top:20px;">
@@ -562,40 +602,75 @@
 					let modUserPassword = $('#modUserPassword').val();
 					let modUserPassword2 = $('#modUserPassword2').val();
 					let modUserRole = $('#modUserRole').val();
+					
+					$('#form_messages').empty();
 
-					ajax({
-					url: 'api/modUser',
-					type: 'POST',
-					data: {
-						userId: selectedUserData.email,
-						userName: modUserName,
-						userLastname: modUserLastname,
-						userPassword: modUserPassword,
-						userRole: modUserRole
+					if (modUserName.length >= 1) { // validar largo de nombre
+						modCount++;
+					} else {
+						$('#form_messages').append('<div class="alert alert-danger"><center><i style="color:#c0392b;" class="fa fa-times" aria-hidden="true"></i> El nombre del usuario debe tener un mínimo de 1 caracteres.</center></div>');
+						$('#form_messages').slideDown({
+							opacity: "show"
+						}, "slow");
 					}
-					}).then(res => {
-						if (res.error) {
-							toastr.error(res.error)
+					
+					if (modUserLastname.length >= 1) { // validar largo de apellido 
+						modCount++;
+					} else {
+						$('#form_messages').append('<div class="alert alert-danger"><center><i style="color:#c0392b;" class="fa fa-times" aria-hidden="true"></i> El apellido del usuario debe tener un mínimo de 1 caracter.</center></div>');
+						$('#form_messages').slideDown({
+							opacity: "show"
+						}, "slow");
+					}
+
+					if (modUserPassword == modUserPassword2) { // validar coincidencia de contraseña
+						if (modUserPassword.length >= 4 || modUserPassword.length == 0) { // validar largo de contraseña (si el largo es 0 no se modifica)
+							modCount++;
 						} else {
-							swal({
-								title: 'Usuario Modificado correctamente!',
-								text: res.ok,
-								backdrop: 'static',
-								keyboard: false,
-								type: 'success',
-								timer: 3000
-							}).then(result => {
-								//$('#satModal').modal('hide')
-								//reloadRepairTableClient()
-							})
+							$('#form_messages').append('<div class="alert alert-danger"><center><i style="color:#c0392b;" class="fa fa-times" aria-hidden="true"></i> La contraseña debe tener un mínimo de 4 caracteres.</center></div>');
+							$('#form_messages').slideDown({
+								opacity: "show"
+							}, "slow");
 						}
-					})
+					} else {
+						$('#form_messages').append('<div class="alert alert-danger"><center><i style="color:#c0392b;" class="fa fa-times" aria-hidden="true"></i> La contraseña no coincide. Debe escribir la misma contraseña en ambos campos.</center></div>');
+						$('#form_messages').slideDown({
+							opacity: "show"
+						}, "slow");
+					}
+					
+					if (modCount == 3) { // 3 validaciones correctas
+						ajax({
+							url: 'api/modUser',
+							type: 'POST',
+							data: {
+								userId: selectedUserData.email,
+								userName: modUserName,
+								userLastname: modUserLastname,
+								userPassword: modUserPassword,
+								userRole: modUserRole
+							}
+						}).then(res => {
+							if (res.error) {
+								toastr.error(res.error)
+							} else {
+								swal({
+									title: 'Usuario Modificado correctamente!',
+									text: res.ok,
+									backdrop: 'static',
+									keyboard: false,
+									type: 'success',
+									timer: 3000
+								}).then(result => {
+									$('#usersModal').modal('hide')
+									reloadTableUsers()
+									$('#modButton').prop('disabled', true);
+		            				$('#desButton').prop('disabled', true);
+								})
+							}
+						})
+					}
 				});
-			/*
-			$.each(data.emails, function(index, val) {
-				$('#email-list').append('<li class="list-group-item"><a href="#" class="btn btn-default btn-xs"><i class="fa fa-times-circle" aria-hidden="true"></i></a>'+val+'</li>');
-			});
-			*/
 
 			})
 			.fail(function() {

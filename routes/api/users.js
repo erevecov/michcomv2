@@ -222,11 +222,13 @@ const Users = [{ // ver todos
         handler: (request, h) => {
             let id = request.payload.userId;
             let name = request.payload.userName;
-            let lastName = request.payload.userLastname;
-            let password = md5(request.payload.userPassword);
+            let lastname = request.payload.userLastname;
+            let password = request.payload.userPassword;
             let role = request.payload.userRole;
             let modUserObj = {};
 
+            
+            
             return new Promise(resolve => {
                 db.find({
                     "selector": {
@@ -241,9 +243,12 @@ const Users = [{ // ver todos
                     if (result.docs[0]) {
                         modUserObj = result.docs[0];
                         modUserObj.name = name;
-                        modUserObj.lastname = lastName;
-                        modUserObj.password = password;
+                        modUserObj.lastname = lastname;
                         modUserObj.role = role;
+                        
+                        if (password) {
+                            modUserObj.password = md5(password);
+                        }
 
                         db.insert(modUserObj, function (errUpdate, body) {
                             if (errUpdate) throw errUpdate;
@@ -255,6 +260,7 @@ const Users = [{ // ver todos
                     }
                 });
             });
+            
         },
         validate: {
             payload: Joi.object().keys({
@@ -262,7 +268,7 @@ const Users = [{ // ver todos
                 userName: Joi.string(),
                 userLastname: Joi.string(),
                 userPassword: Joi.string().allow(''),
-                userRole: Joi.string().allow('')
+                userRole: Joi.string()//.allow('')
             })
         }
     }
