@@ -172,20 +172,20 @@ const sat = [{ // todos los clientes habilitados
     }
 },
 //XXXXXXXXXXXXXXXXXX
-//MODIFICAR REPARACIONES
+//MODIFICAR REPARACIONES AUN NO SIRVE
 { 
     method: 'POST',
     path: '/api/modSatRepair',
     options: {
         handler: (request, h) => {
-            let id = request.payload.id;
-            let technicalName = request.payload.technical;
-            let clientName = request.payload.client;
-            let equipmentName = request.payload.equipment;
-            let brandName = request.payload.brand;
-            let modelName = request.payload.model;
-            let accesoryName = request.payload.accesory;
-            let failName = request.payload.fail;
+            let id = request.payload.id_var;
+            let technical = request.payload.technicalName;
+            let client = request.payload.clientName;
+            let equipment = request.payload.equipmentName;
+            let brand = request.payload.brandName;
+            let model = request.payload.modelName;
+            let accesory = request.payload.accesoryName;
+            let fail = request.payload.failName;
             
 
             let modSatRepairtObj = {};
@@ -193,7 +193,7 @@ const sat = [{ // todos los clientes habilitados
             return new Promise(resolve => {
                 db.find({
                     "selector": {
-                        "_id": id,
+                        "_id": id_var,
                         "type": "satRepair",
                     },
                     "limit": 1
@@ -202,18 +202,18 @@ const sat = [{ // todos los clientes habilitados
 
                     if (result.docs[0]) {
                         modSatRepairtObj = result.docs[0];
-                        modSatRepairtObj.technicalName = technical;
-                        modSatRepairtObj.clientName =client;
-                        modSatRepairtObj.equipmentName = equipment;
-                        modSatRepairtObj.brandName = brand;
-                        modSatRepairtObj.modelName = model;
-                        modSatRepairtObj.accesoryName = accesory;
-                        modSatRepairtObj.failName = fail;
+                        modSatRepairtObj.technical = technical;
+                        modSatRepairtObj.client =client;
+                        modSatRepairtObj.equipment = equipment;
+                        modSatRepairtObj.brand = brand;
+                        modSatRepairtObj.model = model;
+                        modSatRepairtObj.accesory = accesory;
+                        modSatRepairtObj.fail = fail;
                        
                         db.insert(modSatClientObj, function (errUpdate, body) {
                             if (errUpdate) throw errUpdate;
 
-                            resolve({ ok: 'Técnico ' + modSatRepairObj.technicalName + ' modificado correctamente' });
+                            resolve({ ok: 'Técnico ' + modSatRepairObj.technical + ' modificado correctamente' });
                         });
                     } else {
                         resolve({ error: 'el cliente de número ' + _id + ' no existe' });
@@ -223,74 +223,21 @@ const sat = [{ // todos los clientes habilitados
         },
         validate: {
             payload: Joi.object().keys({
-                id: Joi.string(),
-                technical:Joi.string(),
-                client:Joi.string(),
-                equipment:Joi.string(),
-                brand:Joi.string(),
-                model:Joi.string(),
-                moaccesory:Joi.string(),
-                fail:Joi.string(),
+                id_var: Joi.string(),
+                technicalName:Joi.string(),
+                clientName:Joi.string(),
+                equipmentName:Joi.string(),
+                brandName:Joi.string(),
+                modelName:Joi.string(),
+                accesoryName:Joi.string(),
+                failName:Joi.string(),
 
             })
         }
     }
 },
 //XXXXXXXXXXXXXXXXXX
-//MODIFICAR CLIENTES
-{ // modificar cliente en el sistema
-    method: 'POST',
-    path: '/api/modSatClientEdit',
-    options: {
-        handler: (request, h) => {
-            let id = request.payload.id;
-            let name = request.payload.name;
-            let phone = request.payload.phone;
-            let address = request.payload.address;
-            let email = request.payload.email;
-            let modSatClientObj = {};
 
-            return new Promise(resolve => {
-                db.find({
-                    "selector": {
-                        "_id": id,
-                        "type": "satClient",
-                        "status": "enabled"
-                    },
-                    "limit": 1
-                }, function (err, result) {
-                    if (err) throw err;
-
-                    if (result.docs[0]) {
-                        modSatClientObj = result.docs[0];
-                        modSatClientObj.name = name;
-                        modSatClientObj.address = address;
-                        modSatClientObj.email = email;
-                        modSatClientObj.phone = phone;
-
-                        db.insert(modSatClientObj, function (errUpdate, body) {
-                            if (errUpdate) throw errUpdate;
-
-                            resolve({ ok: 'Cliente ' + modSatClientObj.name + ' modificado correctamente' });
-                        });
-                    } else {
-                        resolve({ error: 'el cliente de número ' + phone + ' no existe' });
-                    }
-                });
-            });
-        },
-        validate: {
-            payload: Joi.object().keys({
-                id: Joi.string(),
-                name: Joi.string(),
-                phone: Joi.string(),
-                address: Joi.string().allow(''),
-                email: Joi.string().allow('')
-            })
-        }
-    }
-},
-//XXXXXXXXXXXXXXXXXX
 { // todos los clientes habilitados
     method: 'GET',
     path: '/api/satEquipment',
@@ -408,34 +355,54 @@ const sat = [{ // todos los clientes habilitados
         }
     }
 },
-    { // agregar equipo al sistema
-        method: 'POST',
-        path: '/api/newEquipmentSat',
-        options: {
-            handler: (request, h) => {
-                let equipment = request.payload.equipment;
-             
-                let equipmentObject = {
-                    _id: moment.tz('America/Santiago').format('YYYY-MM-DDTHH:mm:ss.SSSSS'),
-                    type: 'satEquipment',
-                    status: 'enabled',
-                    equipment: equipment
-                }
-                return new Promise(resolve => {
-                    db.insert(equipmentObject, function (errUpdate, body) {
-                        if (errUpdate) throw errUpdate;
+{
 
-                        resolve({ ok: 'Equipo ' + equipmentObject.equipment + ' agregado correctamente' });
-                    });
+ // agregar Tipo de equipo
+    method: 'POST',
+    path: '/api/newEquipmentSat',
+    options: {
+        handler: (request, h) => {
+            let nameEquipment = request.payload.name;
+            console.log(nameEquipment)
+            return new Promise(resolve => {
+                db.find({
+                        selector: {
+                        _id: "satEquipment"
+                    }
+                }, (err, result) => {
+                    if (err) throw err
+
+                    if (result.docs[0]) {
+                       /* db.insert(clientObject, function (errUpdate, body) {
+                          if (errUpdate) throw errUpdate;
+                            resolve({ ok: 'Cliente ' + clientObject.name + ' agregado correctamente' });
+                        });*/
+                        let res = result.docs[0];
+                        let equipmentSelected = res.types.filter(function (el) {
+                            return el.type == nameEquipment
+                        })
+                        if (equipmentSelected.length == 0){
+                            res.types.push(nameEquipment)
+                            resolve(res.types)
+
+                        }else {
+                            resolve({ err: 'El equipo ingresado ya existe'})
+                        }
+                    } else {
+                        resolve({ err: 'No se han encontrado tipos de equipo en el sistema' })
+                    }
                 })
-            },
-            validate: {
-                payload: Joi.object().keys({
-                    equipment: Joi.string()
-                })
-            }
+            })         
+        },
+        validate: {
+            payload: Joi.object().keys({
+                name: Joi.string(),
+            })
         }
-    },
+    }
+},
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 /*
  { // agregar equipo al sistema
         method: 'POST',
