@@ -2,7 +2,7 @@ import Joi from 'joi'
 import cloudant from '../../config/db.js'
 import moment from 'moment-timezone'
 import configEnv from '../../config/env_status.js';
-
+ 
 let db = cloudant.db.use(configEnv.db_logs)
 
 const Logs = [{ // ver todos
@@ -138,7 +138,16 @@ const Logs = [{ // ver todos
         db.find(query, (err, result) => {
           if (err) throw err
 
-          resolve(result.docs)
+          let filterLogs = result.docs.map(function(log) {
+            if(log.img) {
+              log.img = log._id.replace(/:/g, 'Q');
+              return log; 
+            }else {
+              log.img = '';
+              return log;
+            }
+          });
+          resolve(filterLogs)
         })
       })
     },
