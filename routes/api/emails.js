@@ -57,7 +57,7 @@ const emails = [
         mailOptions.attachments = [
             {
                 filename: 'logomichcom.png',
-                path: 'http://michcom.cl/images/contamichcom.png',
+                path: 'http://michcom.cl/assets/img/contamichcom.png',
                 cid: 'logomichcom' //same cid value as in the html img src
             },
             /*
