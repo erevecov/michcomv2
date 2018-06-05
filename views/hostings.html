@@ -219,6 +219,31 @@ const chargeClientsTable = () => {
     });
 }
 
+
+const createAlertMessage = () => {
+    let subtractDay = moment(formatDate()).subtract(5, 'days').format('YYYY-MM-DD'); 
+    let reportDay = moment(subtractDay).add(1, 'year').format('YYYY-MM-DD');
+    let reportDayText = removeLastWord(moment(reportDay).format('LL')) + ' cada año.'
+
+    $('#alertMessage').html(`
+        <div class="alert alert-primary" role="alert">
+            <b>Se enviará un correo de aviso de pago de hosting a gmorales@michcom.cl, miguel@michcom.cl, ereveco@michcom.cl El ${reportDayText}</b>
+        </div>
+    `)
+}
+
+const removeLastWord = (date) => {
+    let text = date;
+    let words = text.replace(/\w+[.!?]?$/, '')
+    return words;
+}
+
+const formatDate = () => {
+    let init = $('#initDate').val();
+    let dateArr = init.split('/');
+    return `${dateArr[2]}-${dateArr[1]}-${dateArr[0]}`;
+}
+
 $('#createButton').on('click', function(){
     let packagesSelect2 = []; // todos los paquetes creados para asignar a un cliente en select2
     withoutClients = [];
@@ -262,8 +287,10 @@ $('#createButton').on('click', function(){
                         <input disabled id="amount" placeholder="Costo del paquete" class="form-control" type="number" min="1">
                     </div>
                 </div>
-
+                
+                <div id="alertMessage" style="padding:10px;"></div>
             </div>  
+            
         </div>
 
     `)
@@ -343,6 +370,13 @@ $('#createButton').on('click', function(){
         showDropdowns: true
     });
 
+    $('#initDate').on('apply.daterangepicker', function(ev, picker) {
+        createAlertMessage();
+    });
+
+    $('#initDate').on('keyup', function(ev, picker) {
+        createAlertMessage();
+    });
 });
 
 $('#clientModButton').on('click', function(){
@@ -396,7 +430,7 @@ $('#modal_body').on('select2:select', '#withoutClients', function(e) {
 });
 
 $('#modal_body').on('select2:select', '#packages', function(e) {
-    $('#freq').prop('disabled', false);
+    //$('#freq').prop('disabled', false);
     $('#initDate').prop('disabled', false);
     $('#amount').prop('disabled', false);
     $('#savePackageToClient').prop('disabled', false);
@@ -407,11 +441,14 @@ $('#modal_body').on('select2:select', '#packages', function(e) {
 
     if(freqSelected == 'yearly') {
         $('#amount').val(packageSelected.year_price)
-    } else if (freqSelected == 'monthly') {
+    }/* else if (freqSelected == 'monthly') {
         $('#amount').val(packageSelected.month_price)
-    }
+    }*/
+
+    createAlertMessage()
 });
 
+/* // COMENTADO POR CAMBIO DE REQUERIMIENTOS (SOLO FRECUENCIA ANUAL)
 $('#modal_body').on('change', '#freq', () =>{
     let freqSelected = $('#freq').val();
     if(freqSelected == 'yearly') {
@@ -420,21 +457,20 @@ $('#modal_body').on('change', '#freq', () =>{
         $('#amount').val(packageSelected.month_price)
     }
 })
+*/
 
 $('#savePackageToClient').on('click', ()=>{
     let client = withoutClientSelected; // rut del cliente seleccionado
     let package = packageSelected.name;
     let freq = $('#freq').val();
-    let init = $('#initDate').val();
     let amount = parseInt($('#amount').val());
-    let dateArr = init.split('/')
-    let formatInit = `${dateArr[2]}-${dateArr[1]}-${dateArr[0]}`;
-
+    let init = formatDate();
+    
     let saveData = {
         client: withoutClientSelected,
         package: packageSelected.name,
         amount: amount,
-        init: formatInit,
+        init: formatDate(),
         freq: freq
     }
 
