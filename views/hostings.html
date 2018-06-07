@@ -227,7 +227,7 @@ const createAlertMessage = () => {
 
     $('#alertMessage').html(`
         <div class="alert alert-primary" role="alert">
-            <b>Se enviará un correo de aviso de pago de hosting a gmorales@michcom.cl, miguel@michcom.cl, ereveco@michcom.cl El ${reportDayText}</b>
+            Se enviará un correo de aviso de pago de hosting <b>${packageSelected.name}</b> del cliente <b>${withoutClientSelectedName}</b> a <b>contacto@michcom.cl</b> El <b>${reportDayText}</b> por un costo de <b>$${number_format($('#amount').val())} CLP</b>
         </div>
     `)
 }
@@ -285,6 +285,13 @@ $('#createButton').on('click', function(){
                     <div class="card-header packages-header"><b>Costo del paquete</b></div>
                     <div class="input-group">
                         <input disabled id="amount" placeholder="Costo del paquete" class="form-control" type="number" min="1">
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="margin-top:5px;">
+                    <div class="card-header packages-header"><b>Texto libre</b></div>
+                    <div class="input-group">
+                        <textarea class="form-control" id="freeText" rows="3" placeholder="comentario libre"></textarea>
                     </div>
                 </div>
                 
@@ -377,6 +384,14 @@ $('#createButton').on('click', function(){
     $('#initDate').on('keyup', function(ev, picker) {
         createAlertMessage();
     });
+
+    $('#amount').on('change', function(ev, picker) { // lo mismo que la de abajo
+        createAlertMessage();
+    });
+
+    $('#amount').on('keyup', function(ev, picker) { // lo mismo que la de arriba
+        createAlertMessage();
+    });
 });
 
 $('#clientModButton').on('click', function(){
@@ -423,6 +438,7 @@ $('#clientDelButton').on('click', function(){
     });
 });
 
+
 $('#modal_body').on('select2:select', '#withoutClients', function(e) {
     $('#packages').prop('disabled', false);
     withoutClientSelected = e.params.data.id;
@@ -464,14 +480,16 @@ $('#savePackageToClient').on('click', ()=>{
     let package = packageSelected.name;
     let freq = $('#freq').val();
     let amount = parseInt($('#amount').val());
+    let freeText = $('#freeText').val();
     let init = formatDate();
-    
+
     let saveData = {
         client: withoutClientSelected,
         package: packageSelected.name,
         amount: amount,
         init: formatDate(),
-        freq: freq
+        freq: freq,
+        freeText: freeText
     }
 
     swal({
@@ -505,7 +523,7 @@ $('#savePackageToClient').on('click', ()=>{
                     clientName: data.client.name,
                     package: package,
                     amount: number_format(amount),
-                    creationDate: init,
+                    creationDate: moment(init).format('DD/MM/YYYY'),
                     freq: esFreq
                 }).draw();        
                 toastr.success(data.ok)

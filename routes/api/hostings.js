@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import cloudant from '../../config/db.js';
 import configEnv from '../../config/env_status.js';
+import moment from 'moment-timezone';
 
 let db = cloudant.db.use(configEnv.db)
 
@@ -96,7 +97,9 @@ const clients = [
         let freq = request.payload.freq;
         let init = request.payload.init;
         let amount = request.payload.amount;
-        
+        let freeText = request.payload.freeText;
+        let reportDay = moment(init).subtract(5, 'days').format('MM-DD');
+
         return new Promise(resolve => {
           db.find({
             selector: {
@@ -112,7 +115,9 @@ const clients = [
                   package: hostingPackage,
                   freq: freq,
                   amount: parseInt(amount),
-                  init_day: init  
+                  init_day: init,
+                  free_text: freeText,
+                  report_day: reportDay
                 };
   
                 db.insert(result.docs[0], (err2, body) => {
@@ -139,7 +144,8 @@ const clients = [
           package: Joi.string(),
           freq: Joi.string(),
           init: Joi.string(),
-          amount: Joi.number()
+          amount: Joi.number(),
+          freeText: Joi.string().allow('')
         })
       }
     }
@@ -180,5 +186,8 @@ const clients = [
   }
 }
 ];
+
+
+
 
 export default clients;
