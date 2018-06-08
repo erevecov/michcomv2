@@ -48,7 +48,7 @@
                                 <th>Paquete</th>
                                 <th>Monto</th>
                                 <th>Fecha de inicio</th>
-                                <th>Frecuencia de pago</th>
+                                <th>Comentario</th>
                             </tr>
                         </tr>
                     </thead>		 
@@ -84,6 +84,7 @@
                         <tr>
                             <th>Nombre del paquete</th>
                             <th>Monto por defecto</th>
+                            <th>Descripción</th>
                         </tr>
                     </thead>		 
                 </table>
@@ -128,7 +129,51 @@ let selectedClientData;
 
 $(document).ready(()=>{
     chargeClientsTable();
+    chargePackagesTable()
 })
+
+const chargePackagesTable = () => {
+    packagesTable = $('#packagesTable')
+    .DataTable( {
+        iDisplayLength: 100,
+        oLanguegue: {
+            sSearch: '',
+            sEmptyTable: ' '
+        },
+        responsive: true,
+        columns: [
+            {data: 'name'},
+            {data: 'amount'},
+            {data: 'description'}
+        ],
+        createdRow: (row, data, dataIndex) => {
+
+        },
+        initComplete: (settings, json) => {
+            ajax({
+                url: 'api/hosting/packages'
+            }).then(res => {
+                if(!res.error) {
+                    let packagesData = res.reduce((arr, el, i) => {
+
+                        let packageDescription = 'Sin descripción';
+
+                        if(el.description = '') {
+                            packageDescription = el.description
+                        }
+                        return arr.concat({
+                            name: el.name,
+                            amount: el.year_price,
+                            description: packageDescription
+                        })
+                    }, [])
+
+                    packagesTable.rows.add(packagesData).draw();
+                }
+            })
+        }
+    })
+}
 
 const chargeClientsTable = () => {
     clientsTable = $('#clientsTable')
@@ -144,7 +189,7 @@ const chargeClientsTable = () => {
             {'data' : 'package'},
             {'data' : 'amount'},
             {'data' : 'creationDate'},
-            {'data' : 'freq'}
+            {'data' : 'text'}
         ],
         createdRow: (row, data, dataIndex) => {
             console.log(data)
@@ -170,7 +215,7 @@ const chargeClientsTable = () => {
                             package: val.hosting.package,
                             amount: number_format(val.hosting.amount),
                             creationDate: date,
-                            freq: freq
+                            text: val.hosting.free_text
                         })
                     });
 
