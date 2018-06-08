@@ -569,7 +569,7 @@ $('#savePackageToClient').on('click', ()=>{
                     package: package,
                     amount: number_format(amount),
                     creationDate: moment(init).format('DD/MM/YYYY'),
-                    freq: esFreq
+                    text: freeText
                 }).draw();        
                 toastr.success(data.ok)
 
