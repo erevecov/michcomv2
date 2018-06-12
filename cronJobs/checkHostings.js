@@ -12,7 +12,7 @@ require('dotenv').load()
 
 var config = {
     from: `Contabilidad Michcom Ltda. <${process.env.EMAIL_USER}>`,
-    to: ['ereveco@michcom.cl'], //contacto@michcom.cl
+    to: ['contacto@michcom.cl'], //contacto@michcom.cl
     subject: 'Pago de Hostings pendientes'
 };
 

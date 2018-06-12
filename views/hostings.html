@@ -64,15 +64,15 @@
         <div class="row">
             <div class="col-md-2 col-xs-12">
                 <br>
-                <button class="btn btn-primary btn-block" id="createButton">
+                <button class="btn btn-primary btn-block" id="packageCreateButton">
                     <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                 </button>
                 <br>
-                <button class="btn btn-warning btn-block" id="modButton" disabled>
+                <button class="btn btn-warning btn-block" id="packageModButton" disabled>
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Modificar
                 </button>
                 <br>	
-                <button class="btn btn-danger btn-block" id="delButton" disabled>
+                <button class="btn btn-danger btn-block" id="packageDelButton" disabled>
                     <i class="fa fa-times" aria-hidden="true"></i> Eliminar
                 </button>
                 <br>		
@@ -126,6 +126,8 @@ let withoutClientSelected = ''; // rut del cliente seleccionado en formulario pa
 let withoutClientSelectedName = ''; // nombre del cliente seleccionado en formulario para asignar paquete a cliente
 let selectedClientRow;
 let selectedClientData;
+let selectedPackageRow;
+let selectedPackageData;
 
 $(document).ready(()=>{
     chargeClientsTable();
@@ -173,6 +175,28 @@ const chargePackagesTable = () => {
             })
         }
     })
+
+    $('#packagesTable tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            console.log('deseleccionada')
+            $(this).removeClass('selected');
+           
+            $('#packageModButton').prop('disabled', true);
+            $('#packageDelButton').prop('disabled', true);
+            
+        } else {
+            console.log('seleccionada')
+            packagesTable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+
+            $('#packageModButton').prop('disabled', false);
+            $('#packageDelButton').prop('disabled', false);
+            selectedPackageRow = clientsTable.row( $(this) );
+            selectedPackageData = clientsTable.row( $(this) ).data();
+
+            console.log(selectedPackageData)
+        }
+    });
 }
 
 const chargeClientsTable = () => {
