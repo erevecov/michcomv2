@@ -165,6 +165,7 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
   let totalClientPaid = 0; // Monto total de las facturas pagadas por el cliente
   let totalClientOwed = 0; // Monto total de las facturas que debe el cliente
   let infoContent; // Contiene todo el html de infoContent
+  let prepaystatus = 0; // estado del botón para abonar una factura pendiente
 
   invoicesData = client.invoices.map(invoice => {
     let reason;
@@ -380,6 +381,9 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
                       <br>
                       <button id="sendStatus" class="btn btn-secondary btn-lg btn-block"><i style="color:#2196F3" class="fa fa-retweet" aria-hidden="true"></i> Cambiar estado a PAGADO</button>
                       <br>
+                      <button id="prepay" class="btn btn-secondary btn-lg btn-block"><i style="color:#27ae60" class="fa fa-money" aria-hidden="true"></i> Abonar</button>
+                      <div id="prepaydiv"></div>
+                      <br>
                       <div id="loadingStatus"></div>
                   </div>
               </div>
@@ -392,13 +396,60 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
                   <center><i style="color:#3498db;" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i><span class="sr-only">Loading...</span></center>
                 </div>
                 <div class="col-md-4">
-                 
+                  
                 </div>  
               </div>
               
           </div>
          `);
 
+        $('#prepay').on('click', function() {
+          if(prepaystatus == 0) {
+            prepaystatus = 1;
+            $('#prepaydiv').html(`
+              <br>
+              <div class="jumbotron">
+                <div class="input-group">
+                  <input id="inputprepay" placeholder="$ Cantidad a abonar" class="form-control" type="text">
+                </div>
+                <br>
+                <button id="sendprepay" class="btn btn-secondary btn-lg btn-block"><i style="color:#27ae60" class="fa fa-paper-plane" aria-hidden="true"></i> Realizar abono</button>
+              </div>
+            `);
+
+            $('#inputprepay').focus();
+
+
+            $('#sendprepay').on('click', function() {
+              let prepay = $('#inputprepay').val()
+
+              swal({
+                title: `¿Estás seguro de abonar ${}?`, // TODO: TERMINAR ESTO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                text: '',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, modificar',
+                cancelButtonText: 'No, cancelar!',
+                confirmButtonClass: 'btn btn-secondary',
+                cancelButtonClass: 'btn btn-primary',
+                buttonsStyling: false
+              }).then(function(action) {
+                if (action.value) {
+                  
+                } else if (action.dismiss) {
+                  toastr.info('ABONO CANCELADO');
+                }
+              });
+
+            });
+          } else {
+            prepaystatus = 0;
+            $('#prepaydiv').empty();
+          }
+        });
+  
 
         $('input[name="invoiceDate"]').daterangepicker({
           "locale": {

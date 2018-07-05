@@ -104,7 +104,8 @@ const Logs = [{ // ver todos
       })
     }
   }
-}, { // ver logs personalizados
+},
+{ // ver logs personalizados
   method: 'POST',
   path: '/api/getLogs',
   options: {
