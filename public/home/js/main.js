@@ -424,7 +424,7 @@ const chargeInvoiceTable = (client) => { // TODO: HACER ESTE (funcion grande)
               let prepay = $('#inputprepay').val()
 
               swal({
-                title: `¿Estás seguro de abonar ${}?`, // TODO: TERMINAR ESTO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                title: `¿Estás seguro de abonar TESTING?`, // TODO: TERMINAR ESTO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 text: '',
                 type: 'question',
                 showCancelButton: true,
