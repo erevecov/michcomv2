@@ -81,7 +81,7 @@ const emails = [
         */
 
         mailOptions.to = to;
-        mailOptions.to.push('ereveco@michcom.cl');
+        mailOptions.to.push('contabilidad@michcom.cl');
         console.log(mailOptions.to);
         mailOptions.html = html;
 
