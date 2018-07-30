@@ -13,7 +13,7 @@ var config = {
 var transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SERVER,
     port: 587,
-    secureConnection: false, // use TLS
+    secure: true, // use TLS
     auth: {
         user: process.env.EMAIL_USER, // .env para commit
         pass: process.env.EMAIL_PASSWORD // .env para commit
