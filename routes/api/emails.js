@@ -6,14 +6,14 @@ require('dotenv').load()
 
 var config = {
     from: `Contabilidad Michcom Ltda. <${process.env.EMAIL_USER}>`,
-    to: ['eduardorevecovillalobos@gmail.com'],
+    to: ['contabilidad@michcom.cl'],
     subject: 'Facturas pendientes'
 };
 
 var transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SERVER,
-    port: 25,
-    secure: false, // use TLS
+    port: 587,
+    secure: true, // use TLS
     auth: {
         user: process.env.EMAIL_USER, // .env para commit
         pass: process.env.EMAIL_PASSWORD // .env para commit
@@ -80,7 +80,6 @@ const emails = [
         */
 
         mailOptions.to = to;
-        mailOptions.to.push('contabilidad@michcom.cl');
         mailOptions.to.push('ereveco@michcom.cl');
         console.log(mailOptions.to);
         mailOptions.html = html;
